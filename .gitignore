@@ -90,3 +90,6 @@ typings/
 
 # Electron-Forge
 out/
+
+# Editor settings
+*.vscode
