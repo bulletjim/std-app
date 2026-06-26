@@ -1,2 +1,8 @@
-// See the Electron documentation for details on how to use preload scripts:
-// https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
+import { contextBridge, ipcRenderer } from "electron";
+
+// TableAPI
+contextBridge.exposeInMainWorld('tableAPI', {
+    createTable: (name: string, password: string) => ipcRenderer.invoke('table:create-table', name, password),
+    countTables: () => ipcRenderer.invoke('table:count-tables')
+
+})

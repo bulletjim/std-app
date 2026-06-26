@@ -1,4 +1,22 @@
 import { defineConfig } from 'vite';
 
-// https://vitejs.dev/config
-export default defineConfig({});
+export default defineConfig({
+  build: {
+    outDir: '.vite/build',
+    
+    lib: {
+      entry: './src/backend/main.ts', 
+      fileName: () => 'main.js',
+      formats: ['cjs'] 
+    },
+    
+    rollupOptions: {
+        external: [
+          'better-sqlite3', 
+          'electron', 
+          'path', 
+          'fs'
+        ],
+    },
+  },
+});
