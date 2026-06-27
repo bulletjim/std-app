@@ -2,7 +2,7 @@ import { CreateTableRequest } from "../interfaces/tableTypes"
 import * as tableRepository from "../db/tableRepository"
 import { ServiceResponse } from "../interfaces/serviceTypes";
 
-export const createTable = async (tableName: string, unhashedPassword: string) : Promise<ServiceResponse<void>> => {
+export const saveTable = async (tableName: string, unhashedPassword: string) : Promise<ServiceResponse<void>> => {
     
     // MOCK table
     const newTable: CreateTableRequest = {
@@ -14,7 +14,7 @@ export const createTable = async (tableName: string, unhashedPassword: string) :
     };
 
     const newId = tableRepository.createTable(newTable);
-    if(newId == 0){
+    if(newId == null){
         return {
             success: false,
             error: "Table not created"

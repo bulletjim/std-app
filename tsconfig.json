@@ -11,7 +11,13 @@
     "baseUrl": ".",
     "outDir": "dist",
     "moduleResolution": "bundler",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@backend/*" : ["./src/backend/*"],
+      "@frontend/*": ["./src/frontend/*"],
+      "@test/*": [".src/tests/*"]
+    }
+
   },
   "include": ["src"]
 }

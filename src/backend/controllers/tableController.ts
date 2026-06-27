@@ -4,7 +4,7 @@ import * as tableService from "../services/tableService"
 export const setupTableHandlers = () => {
     ipcMain.handle('table:create-table', async (event: IpcMainInvokeEvent, tableName: string, password: string) => {
         try{
-            return await tableService.createTable(tableName, password);
+            return await tableService.saveTable(tableName, password);
         } catch(error){
             console.log("[ERROR] ", error);
             return {success: false, error: "Internal Server Error: Unable to create the table"};

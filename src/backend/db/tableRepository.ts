@@ -1,10 +1,10 @@
-import Database from "better-sqlite3";
+import SQLite from "better-sqlite3";
 import { CreateTableRequest } from "../interfaces/tableTypes";
 
-let db: Database.Database;
+let db: SQLite.Database;
 
 export const createDb = (dbPath: string) => {
-    db = new Database(dbPath, {
+    db = new SQLite(dbPath, {
         verbose: console.log
     });
 
