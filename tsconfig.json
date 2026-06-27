@@ -7,9 +7,17 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "sourceMap": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "outDir": "dist",
-    "moduleResolution": "node",
-    "resolveJsonModule": true
-  }
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "paths": {
+      "@backend/*" : ["./src/backend/*"],
+      "@frontend/*": ["./src/frontend/*"],
+      "@test/*": [".src/tests/*"]
+    }
+
+  },
+  "include": ["src"]
 }

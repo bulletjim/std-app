@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secure Table Database</title>
+  
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Database Management</h1>
+
+    <section class="card">
+      <h2>Create New Table</h2>
+      <div class="input-group">
+        <label for="table-name">Name</label>
+        <input type="text" id="table-name" placeholder="Shopping List" />
+      </div>
+      <div class="input-group">
+        <label for="table-password">Password</label>
+        <input type="password" id="table-password" placeholder="Insert Password" />
+      </div>
+      <button id="save-btn">Save</button>
+      <div id="form-message" class="message"></div>
+    </section>
+
+    <section class="card">
+      <h2>Statistics</h2>
+      <div class="counter-display">
+        Created Tables: <span id="count-display">0</span> / 5
+      </div>
+      <button id="count-btn">Count Tables</button>
+      <div id="count-message" class="message"></div>
+    </section>
+  </div>
+
+  <script type="module" src="renderer.ts"></script>
+</body>
+</html>
