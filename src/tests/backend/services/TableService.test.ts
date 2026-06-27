@@ -4,7 +4,7 @@ import {beforeAll, describe, expect, it, vi} from 'vitest';
 
 vi.mock('@backend/db/tableRepository')
 
-describe("Business Logic: Table Insert", () => {
+describe("Business Logic: Table Service", () => {
 
     beforeAll(() => {
         tableRepository.createDb(':memory');   
@@ -26,4 +26,5 @@ describe("Business Logic: Table Insert", () => {
         expect(response.success).toBe(false);
         expect(response.error).toBe('Table not created');
     })
+
 });

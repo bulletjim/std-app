@@ -1,26 +1,43 @@
 import { CreateTableRequest } from "../interfaces/tableTypes"
 import * as tableRepository from "../db/tableRepository"
 import { ServiceResponse } from "../interfaces/serviceTypes";
+import { encryptData, extractSecreKey, hashPassword } from "./securityService";
 
 export const saveTable = async (tableName: string, unhashedPassword: string) : Promise<ServiceResponse<void>> => {
+    const hashResult = await hashPassword(unhashedPassword);
+    if(!hashResult.success || !hashResult.hashedPassword || !hashResult.salt){
+        return {success: false, error: "Table not created"}
+    }
     
-    // MOCK table
+    const secretKey = await extractSecreKey(unhashedPassword, hashResult.salt);
+
+    const initTableValues = JSON.stringify({rows: [], columns: []})
+
+    const encryptedDataResult = encryptData(initTableValues, secretKey);
+
+    if(!encryptedDataResult.success || !encryptedDataResult.encryptedContent){
+        return {success: false, error: "Table not created"}
+    }
+
     const newTable: CreateTableRequest = {
         tableName: tableName,
+        passwordHash: hashResult.hashedPassword,
+        passwordSalt: hashResult.salt,
+        encryptedContent: encryptedDataResult.encryptedContent
+    }
 
-        passwordHash: unhashedPassword,
-        passwordSalt: "mock-salt",
-        encryptedContent: JSON.stringify({rows: [], columns: [] })
-    };
-
-    const newId = tableRepository.createTable(newTable);
-    if(newId == null){
+    const insertedRowId= tableRepository.createTable(newTable);
+    if(insertedRowId == null){
         return {
             success: false,
             error: "Table not created"
         }
+    } else {
+        return {
+            success: true
+        }
     }
-    return {success: true}
+
 }
 
 export const checkCountTables = async () : Promise<ServiceResponse<number>> => {
