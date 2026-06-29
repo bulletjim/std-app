@@ -99,3 +99,8 @@ export const extractSecreKey = async (unhashedPassword: string, salt: string) =>
         310000, 32, 'sha512'
     )
 }
+
+export const checkPassword = async (hashedPassword: string, unhashedPassword: string, salt: string) => {
+    const checkPassword = await pbkdf2Async(unhashedPassword, Buffer.from(salt, 'hex'), 310000, 64, 'sha512');
+    return checkPassword.toString('hex') === hashedPassword;
+}

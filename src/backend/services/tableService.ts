@@ -1,7 +1,7 @@
 import { CreateTableRequest } from "../interfaces/tableTypes"
 import * as tableRepository from "../db/tableRepository"
 import { ServiceResponse } from "../interfaces/serviceTypes";
-import { encryptData, extractSecreKey, hashPassword } from "./securityService";
+import { checkPassword, encryptData, extractSecreKey, hashPassword } from "./securityService";
 
 export const saveTable = async (tableName: string, unhashedPassword: string) : Promise<ServiceResponse<void>> => {
     const hashResult = await hashPassword(unhashedPassword);
@@ -55,4 +55,30 @@ export const checkCountTables = async () : Promise<ServiceResponse<number>> => {
         success:true,
         value:rows
     }
+}
+
+export const checkDeleteTable = async (id: number, unhashedPassword: string) : Promise<ServiceResponse<number>> => {
+
+    const table = tableRepository.getTableById(id);
+    const checkedPassword = await checkPassword(table.passwordHash, unhashedPassword, table.passwordSalt);
+    if(checkedPassword) {
+        const deletedRow = tableRepository.deleteTable(id);
+
+        if(deletedRow === 0){
+            return {
+                success: false,
+                error: "Table not deleted"
+            }
+        }
+        return {
+            success: true,
+            value: deletedRow
+        }
+    } else {
+        return {
+            success:false,
+            error: "Invalid password"
+        }
+    }
+    
 }
