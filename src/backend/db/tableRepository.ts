@@ -37,8 +37,16 @@ export const deleteTable = (id: number) => {
     return result.changes;
 }
 
-export const getTableById = (id: number) => {
-    const sql = db.prepare(`SELECT table_name, password_hash, password_salt FROM user_tables WHERE id = ?`);
-    const result = sql.get(id);
-    return result as TableDTO; 
+export const getTableById = (id: number) : TableDTO | null => {
+    const sql = db.prepare(`SELECT id as id, password_hash AS passwordHash, password_salt AS passwordSalt FROM user_tables WHERE id = ?`);
+    const result = sql.get(id) as TableDTO;
+
+    if(!result){
+        return null;
+    }
+    return {
+        id: result.id,
+        passwordHash: result.passwordHash,
+        passwordSalt: result.passwordSalt
+    }; 
 }

@@ -1,13 +1,17 @@
 import * as tableRepository from '@backend/db/tableRepository';
-import { saveTable } from '@backend/services/tableService';
-import {beforeAll, describe, expect, it, vi} from 'vitest';
+import * as securityService from '@backend/services/securityService';
+import { checkDeleteTable, saveTable } from '@backend/services/tableService';
+import {afterEach, beforeAll, describe, expect, it, vi} from 'vitest';
 
-vi.mock('@backend/db/tableRepository')
+vi.mock('@backend/db/tableRepository');
 
 describe("Business Logic: Table Service", () => {
 
     beforeAll(() => {
         tableRepository.createDb(':memory');   
+    })
+    afterEach(() => {
+        vi.resetAllMocks();
     })
 
     it("Should create a table", async () => {
@@ -18,7 +22,7 @@ describe("Business Logic: Table Service", () => {
         expect(tableRepository.createTable).toHaveBeenCalledOnce();
     }); 
     
-    it("Should return success:false + an error: error if the creation has failed", async () => {
+    it("Should return success: false + an error: error if the creation has failed", async () => {
         // @ts-expect-error This is an inducted error
         vi.mocked(tableRepository.createTable).mockReturnValue(null);
         const response = await saveTable('new table', 'bad passwword');
@@ -27,4 +31,36 @@ describe("Business Logic: Table Service", () => {
         expect(response.error).toBe('Table not created');
     })
 
+    it("Should delete table", async () => {
+        vi.mocked(tableRepository.getTableById).mockReturnValue({
+            id: 1,
+            passwordHash: 'hash',
+            passwordSalt: 'salt'
+        });
+
+        vi.spyOn(securityService, 'checkPassword').mockResolvedValue(true);
+
+        vi.mocked(tableRepository.deleteTable).mockReturnValue(1);
+        const deleteResponse = await checkDeleteTable(1, 'password123');
+
+        expect(deleteResponse.success).toBe(true);
+        expect(securityService.checkPassword).toHaveBeenCalledOnce()
+        expect(tableRepository.deleteTable).toHaveBeenCalledOnce();
+    })
+
+    it("Should fail to delete table if password is wrong", async () => {
+    vi.mocked(tableRepository.getTableById).mockReturnValue({
+        id: 1,
+        passwordHash: 'hash',
+        passwordSalt: 'salt'
+    });
+
+    vi.mocked(securityService.checkPassword).mockResolvedValue(false);
+
+    const response = await checkDeleteTable(1, 'password123');
+    
+    expect(response.success).toBe(false);
+    expect(response.error).toBe("Invalid password");
+    expect(tableRepository.deleteTable).not.toHaveBeenCalled();
+    });
 });

@@ -1,4 +1,4 @@
-import { decryptData, encryptData, extractSecreKey, hashPassword } from "@backend/services/securityService";
+import { decryptData, encryptData, hashPassword } from "@backend/services/securityService";
 import { describe, expect, it, vi } from "vitest";
 import crypto from 'node:crypto';
 import { afterEach } from "node:test";

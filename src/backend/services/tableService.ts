@@ -3,7 +3,7 @@ import * as tableRepository from "../db/tableRepository"
 import { ServiceResponse } from "../interfaces/serviceTypes";
 import { checkPassword, encryptData, extractSecreKey, hashPassword } from "./securityService";
 
-export const saveTable = async (tableName: string, unhashedPassword: string) : Promise<ServiceResponse<void>> => {
+export const saveTable = async (tableName: string, unhashedPassword: string) : Promise<ServiceResponse<number>> => {
     const hashResult = await hashPassword(unhashedPassword);
     if(!hashResult.success || !hashResult.hashedPassword || !hashResult.salt){
         return {success: false, error: "Table not created"}
@@ -26,7 +26,7 @@ export const saveTable = async (tableName: string, unhashedPassword: string) : P
         encryptedContent: encryptedDataResult.encryptedContent
     }
 
-    const insertedRowId= tableRepository.createTable(newTable);
+    const insertedRowId = tableRepository.createTable(newTable);
     if(insertedRowId == null){
         return {
             success: false,
@@ -34,7 +34,8 @@ export const saveTable = async (tableName: string, unhashedPassword: string) : P
         }
     } else {
         return {
-            success: true
+            success: true,
+            value: insertedRowId as number
         }
     }
 
@@ -60,25 +61,32 @@ export const checkCountTables = async () : Promise<ServiceResponse<number>> => {
 export const checkDeleteTable = async (id: number, unhashedPassword: string) : Promise<ServiceResponse<number>> => {
 
     const table = tableRepository.getTableById(id);
-    const checkedPassword = await checkPassword(table.passwordHash, unhashedPassword, table.passwordSalt);
-    if(checkedPassword) {
-        const deletedRow = tableRepository.deleteTable(id);
-
-        if(deletedRow === 0){
+    if(table) {
+        const checkedPassword = await checkPassword(table.passwordHash, unhashedPassword, table.passwordSalt);
+        if(checkedPassword) {
+            const deletedRow = tableRepository.deleteTable(id);
+            if(deletedRow === 0){
+                return {
+                    success: false,
+                    error: "Table not deleted"
+                }
+            }
             return {
-                success: false,
-                error: "Table not deleted"
+                success: true,
+                value: deletedRow
+            }
+        } else {
+            return {
+                success:false,
+                error: "Invalid password"
             }
         }
-        return {
-            success: true,
-            value: deletedRow
-        }
+        
     } else {
         return {
-            success:false,
-            error: "Invalid password"
+            success: false,
+            error: "Table Not Found"
         }
-    }
+    } 
     
 }
