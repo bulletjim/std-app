@@ -1,10 +1,12 @@
+import { ServerResponse } from "@backend/interfaces/controllerTypes";
+
 export {};
 
 declare global {
   interface Window {
     tableAPI: {
-      createTable: (name: string, password: string) => Promise<{ success: boolean; error?: string }>;
-      countTables: () => Promise<{success: boolean, value?: number, error?: string}>;
+      createTable: (name: string, password: string) => Promise<ServerResponse<number>>;
+      // TOBEREFACTORED: countTables: () => Promise<ServerResponse<number>>;
     };
   }
 }

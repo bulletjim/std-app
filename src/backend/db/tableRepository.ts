@@ -27,10 +27,12 @@ export const createTable = (table: CreateTableRequest) => {
     return result.lastInsertRowid;
 };
 
+/*
 export const countTotalTables = () => {
     const result = db.prepare(`SELECT COUNT(*) AS total FROM user_tables`).get() as {total: number};
     return result ? result.total : 0;
 }
+*/
 
 export const deleteTable = (id: number) => {
     const result = db.prepare(`DELETE FROM user_tables WHERE id = ?`).run(id);

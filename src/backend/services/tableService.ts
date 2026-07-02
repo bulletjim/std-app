@@ -41,6 +41,7 @@ export const saveTable = async (tableName: string, unhashedPassword: string) : P
 
 }
 
+/*
 export const checkCountTables = async () : Promise<ServiceResponse<number>> => {
     const rows = tableRepository.countTotalTables();
 
@@ -57,6 +58,7 @@ export const checkCountTables = async () : Promise<ServiceResponse<number>> => {
         value:rows
     }
 }
+*/
 
 export const checkDeleteTable = async (id: number, unhashedPassword: string) : Promise<ServiceResponse<number>> => {
 

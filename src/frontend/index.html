@@ -1,40 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Secure Table Database</title>
-  
-  <link rel="stylesheet" href="index.css" />
-</head>
-<body>
-  <div class="container">
-    <h1>Database Management</h1>
 
-    <section class="card">
-      <h2>Create New Table</h2>
-      <div class="input-group">
-        <label for="table-name">Name</label>
-        <input type="text" id="table-name" placeholder="Shopping List" />
-      </div>
-      <div class="input-group">
-        <label for="table-password">Password</label>
-        <input type="password" id="table-password" placeholder="Insert Password" />
-      </div>
-      <button id="save-btn">Save</button>
-      <div id="form-message" class="message"></div>
-    </section>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Table Database</title>
+    <link rel="stylesheet" href="./index.css">
+  </head>
 
-    <section class="card">
-      <h2>Statistics</h2>
-      <div class="counter-display">
-        Created Tables: <span id="count-display">0</span> / 5
-      </div>
-      <button id="count-btn">Count Tables</button>
-      <div id="count-message" class="message"></div>
-    </section>
-  </div>
+  <body>
+    <header>
+      <h1>Secure Vault</h1>
+      <nav aria-label="Main Menu">
+        <button id="nav-btn-home">Home</button>
+        <button id="nav-btn-dashboard" class="hidden">My Tables</button>
+      </nav>
+    </header>
+    <main class="app-container">
 
-  <script type="module" src="renderer.ts"></script>
-</body>
+      <section id="view-section" class="view-active" aria-labelledby="home-title">
+        <h2 id="home-title">Create or access a table</h2>
+
+        <form id="form-access-table">
+          <div>
+            <label for="table-name">Table Name</label>
+            <input type="text" name="tableName" id="table-name" required>
+          </div>
+          <div>
+            <label for="table-password">Password</label>
+            <input type="password" name="tablePassword" id="table-password" required>
+          </div>
+        </form>
+      </section>
+      
+      <section id="view-dashboard" class="view hidden" aria-labelledby="dashboard-title">
+        <h2 id="dashboard-title">Your Tables</h2>
+            
+        <ul id="table-list-container" class="table-list">
+        </ul>
+      </section>
+
+      <section id="view-table-detail" class="view hidden" aria-labelledby="detail-title">
+        <header>
+          <h2 id="detail-title">Table Name</h2>
+          <button id="btn-add-row">Add Row</button>
+        </header>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Content</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="table-body-container">
+          </tbody>
+        </table>
+      </section>
+
+    </main>
+
+    <dialog id="modal-confirm">
+      <article>
+        <h2>Are you sure?</h2>
+        <p>Do you want to delete this table? This action is permanent</p>
+        <footer>
+          <button id="btn-modal-cancel">Cancel</button>
+          <button id="btn-modal-confirm">Delete</button>
+        </footer>
+      </article>
+    </dialog>
+
+    <template id="tpl-table-list-item">
+      <li>
+        <article class="table-card">
+          <h3 class="tpl-name">Nome Tabella</h3>
+          <div class="actions">
+            <button class="tpl-btn-open">Apri</button>
+            <button class="tpl-btn-delete danger">Elimina</button>
+          </div>
+        </article>
+      </li>
+    </template>
+
+    <template id="tpl-data-row">
+      <tr>
+        <td class="tpl-row-id">1</td>
+        <td class="tpl-row-content">Content</td>
+        <td>
+          <button class="tpl-btn-edit">Edit</button>
+        </td>
+      </tr>
+    </template>
+
+    <footer>
+      <small>State: <span id="app-status">Ready</span></small>
+    </footer>
+
+    <script type="module" src="./renderer.ts"></script>
+  </body>
+
 </html>
