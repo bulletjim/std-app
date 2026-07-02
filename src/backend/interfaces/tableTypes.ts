@@ -4,3 +4,9 @@ export interface CreateTableRequest {
     passwordSalt: string,
     encryptedContent: string
 }
+
+export interface TableDTO {
+    id: number,
+    passwordHash: string,
+    passwordSalt: string
+}

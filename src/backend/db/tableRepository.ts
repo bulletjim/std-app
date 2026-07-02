@@ -1,5 +1,5 @@
 import SQLite from "better-sqlite3";
-import { CreateTableRequest } from "../interfaces/tableTypes";
+import { CreateTableRequest, TableDTO } from "../interfaces/tableTypes";
 
 let db: SQLite.Database;
 
@@ -30,4 +30,23 @@ export const createTable = (table: CreateTableRequest) => {
 export const countTotalTables = () => {
     const result = db.prepare(`SELECT COUNT(*) AS total FROM user_tables`).get() as {total: number};
     return result ? result.total : 0;
+}
+
+export const deleteTable = (id: number) => {
+    const result = db.prepare(`DELETE FROM user_tables WHERE id = ?`).run(id);
+    return result.changes;
+}
+
+export const getTableById = (id: number) : TableDTO | null => {
+    const sql = db.prepare(`SELECT id as id, password_hash AS passwordHash, password_salt AS passwordSalt FROM user_tables WHERE id = ?`);
+    const result = sql.get(id) as TableDTO;
+
+    if(!result){
+        return null;
+    }
+    return {
+        id: result.id,
+        passwordHash: result.passwordHash,
+        passwordSalt: result.passwordSalt
+    }; 
 }

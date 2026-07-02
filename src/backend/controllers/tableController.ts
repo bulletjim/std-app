@@ -19,4 +19,13 @@ export const setupTableHandlers = () => {
             return {success: false, error: "Internal Server Error"};
         }
     })
+
+    ipcMain.handle('table:delete-table', async (event: IpcMainInvokeEvent, id: number, password: string) => {
+        try {
+            return await tableService.checkDeleteTable(id, password);
+        } catch(error){
+            console.log("[ERROR] ", error);
+            return {success: false, error: "Internal Server Error"};
+        }
+    })
 }
