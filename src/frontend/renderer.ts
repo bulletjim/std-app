@@ -1,4 +1,5 @@
-import { initHome } from "./components/home";
+import { loadDashboard } from "./components/dashboard";
+import { changeToCreateTable } from "./components/createTable";
 import { navigateTo } from "./router";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -6,23 +7,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // App Components Initialization
   console.log('[ROUTER/INFO]: App Initialised');
 
-  initHome();
+  loadDashboard();
 
-  const homeBtn = document.getElementById('nav-btn-home');
-  const dashboardBtn = document.getElementById('na-btn-dashboard');
+  const homeBtn = document.getElementById('nav-btn-create-table');
+  const dashboardBtn = document.getElementById('nav-btn-dashboard');
 
   if(homeBtn) {
     homeBtn.addEventListener('click', () => {
-      navigateTo('view-home');
+      navigateTo('view-create-table');
+      changeToCreateTable();
     });
   }
 
   if(dashboardBtn) {
     dashboardBtn.addEventListener('click', () => {
       navigateTo('view-dashboard');
+      loadDashboard();
     });
   }
-
-  navigateTo('view-home');
 
 })

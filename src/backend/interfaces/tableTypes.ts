@@ -7,6 +7,7 @@ export interface CreateTableRequest {
 
 export interface TableDTO {
     id: number,
+    tableName: string,
     passwordHash: string,
     passwordSalt: string
 }

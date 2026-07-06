@@ -1,7 +1,7 @@
-import { CreateTableRequest } from "../interfaces/tableTypes"
+import { CreateTableRequest, TableDTO } from "@backend/interfaces/tableTypes"
 import * as tableRepository from "../db/tableRepository"
-import { ServiceResponse } from "../interfaces/serviceTypes";
-import { checkPassword, encryptData, extractSecreKey, hashPassword } from "./securityService";
+import { ServiceResponse } from "@backend/interfaces/serviceTypes";
+import { checkPassword, encryptData, extractSecreKey, hashPassword } from "../services/securityService";
 
 export const saveTable = async (tableName: string, unhashedPassword: string) : Promise<ServiceResponse<number>> => {
     const hashResult = await hashPassword(unhashedPassword);
@@ -41,30 +41,23 @@ export const saveTable = async (tableName: string, unhashedPassword: string) : P
 
 }
 
-/*
-export const checkCountTables = async () : Promise<ServiceResponse<number>> => {
-    const rows = tableRepository.countTotalTables();
 
-    if(rows == 0){
-        return {
-            success:false,
-            value: rows,
-            error: "No tables found"
-        }
+export const verifyTableNames = async () : Promise<TableDTO[] | null> => {
+    const tableNames = tableRepository.getAllTableInfos();
+    if(tableNames !== null){
+        return tableNames;
     }
 
-    return {
-        success:true,
-        value:rows
-    }
+    return null;
+    
 }
-*/
+
 
 export const checkDeleteTable = async (id: number, unhashedPassword: string) : Promise<ServiceResponse<number>> => {
 
     const table = tableRepository.getTableById(id);
     if(table) {
-        const checkedPassword = await checkPassword(table.passwordHash, unhashedPassword, table.passwordSalt);
+        const checkedPassword = await checkPassword(table.passwordHash as string, unhashedPassword, table.passwordSalt as string);
         if(checkedPassword) {
             const deletedRow = tableRepository.deleteTable(id);
             if(deletedRow === 0){

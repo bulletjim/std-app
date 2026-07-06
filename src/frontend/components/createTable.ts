@@ -1,12 +1,13 @@
-import { createTable } from "@frontend/api";
-import { navigateTo } from "@frontend/router";
+import { createTable } from "../api";
+import { navigateTo } from "../router";
+import { loadDashboard } from "./dashboard";
 
-export const initHome = () : void => {
+export const changeToCreateTable = () : void => {
 
-    const form = document.getElementById('form-access-table') as HTMLFormElement;
+    const form = document.getElementById('form-create-table') as HTMLFormElement;
 
     if(!form) {
-        console.error('[HOME/ERROR]: Form element not found');
+        console.error('[CREATE-TABLE/ERROR]: Form element not found');
         return;
     }
 
@@ -27,17 +28,17 @@ export const initHome = () : void => {
 
             const success = await createTable(tableName, password);
             if(success) {
-                console.log('Access Granted');
+                console.log('[CREATE-TABLE/LOG] Table Created');
                 form.reset();
-
                 navigateTo('view-dashboard');
+                loadDashboard();
 
             } else {
                 alert('Wrong Passoword');
             }
 
         } catch (error) {
-            console.error('[HOME/ERROR]: ', error);
+            console.error('[CRETATE-TABLE/ERROR]: ', error);
         }
 
     })

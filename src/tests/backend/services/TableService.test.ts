@@ -1,6 +1,6 @@
 import * as tableRepository from '@backend/db/tableRepository';
 import * as securityService from '@backend/services/securityService';
-import { checkDeleteTable, saveTable } from '@backend/services/tableService';
+import { checkDeleteTable, saveTable, verifyTableNames } from '@backend/services/tableService';
 import {afterEach, beforeAll, describe, expect, it, vi} from 'vitest';
 
 vi.mock('@backend/db/tableRepository');
@@ -34,6 +34,7 @@ describe("Business Logic: Table Service", () => {
     it("Should delete table", async () => {
         vi.mocked(tableRepository.getTableById).mockReturnValue({
             id: 1,
+            tableName: 'name',
             passwordHash: 'hash',
             passwordSalt: 'salt'
         });
@@ -49,18 +50,36 @@ describe("Business Logic: Table Service", () => {
     })
 
     it("Should fail to delete table if password is wrong", async () => {
-    vi.mocked(tableRepository.getTableById).mockReturnValue({
-        id: 1,
-        passwordHash: 'hash',
-        passwordSalt: 'salt'
-    });
+        vi.mocked(tableRepository.getTableById).mockReturnValue({
+            id: 1,
+            tableName: 'name',
+            passwordHash: 'hash',
+            passwordSalt: 'salt'
+        });
 
-    vi.mocked(securityService.checkPassword).mockResolvedValue(false);
+        vi.mocked(securityService.checkPassword).mockResolvedValue(false);
 
-    const response = await checkDeleteTable(1, 'password123');
+        const response = await checkDeleteTable(1, 'password123');
     
-    expect(response.success).toBe(false);
-    expect(response.error).toBe("Invalid password");
-    expect(tableRepository.deleteTable).not.toHaveBeenCalled();
+        expect(response.success).toBe(false);
+        expect(response.error).toBe("Invalid password");
+        expect(tableRepository.deleteTable).not.toHaveBeenCalled();
     });
+
+    it("Should return table names", async () => {
+        vi.mocked(tableRepository.getAllTableNames).mockReturnValue([
+            "table1", "table2", "table3"
+        ]);
+
+        const response = await verifyTableNames();
+        expect(response?.length).toBe(3);
+    });
+
+    it("Should return null if tables are not found", async () => {
+        vi.mocked(tableRepository.getAllTableNames).mockReturnValue([]);
+        
+        const response = await verifyTableNames();
+        expect(response).toBe(null);
+    })
+
 });

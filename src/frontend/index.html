@@ -12,16 +12,16 @@
     <header>
       <h1>Secure Vault</h1>
       <nav aria-label="Main Menu">
-        <button id="nav-btn-home">Home</button>
-        <button id="nav-btn-dashboard" class="hidden">My Tables</button>
+        <button id="nav-btn-create-table" class="active">+</button>
+        <button id="nav-btn-dashboard" class="active">My Tables</button>
       </nav>
     </header>
     <main class="app-container">
 
-      <section id="view-section" class="view-active" aria-labelledby="home-title">
-        <h2 id="home-title">Create or access a table</h2>
+      <section id="view-create-table" class="view hidden" aria-labelledby="create-table-title">
+        <h2 id="home-title">Create table</h2>
 
-        <form id="form-access-table">
+        <form id="form-create-table">
           <div>
             <label for="table-name">Table Name</label>
             <input type="text" name="tableName" id="table-name" required>
@@ -30,10 +30,13 @@
             <label for="table-password">Password</label>
             <input type="password" name="tablePassword" id="table-password" required>
           </div>
+          <div>
+            <button type="submit">Create</button>
+          </div>
         </form>
       </section>
       
-      <section id="view-dashboard" class="view hidden" aria-labelledby="dashboard-title">
+      <section id="view-dashboard" class="view active" aria-labelledby="dashboard-title">
         <h2 id="dashboard-title">Your Tables</h2>
             
         <ul id="table-list-container" class="table-list">
@@ -75,10 +78,10 @@
     <template id="tpl-table-list-item">
       <li>
         <article class="table-card">
-          <h3 class="tpl-name">Nome Tabella</h3>
+          <h3 class="tpl-name">Name</h3>
           <div class="actions">
-            <button class="tpl-btn-open">Apri</button>
-            <button class="tpl-btn-delete danger">Elimina</button>
+            <button class="tpl-btn-open">Open</button>
+            <button class="tpl-btn-delete danger">Delete</button>
           </div>
         </article>
       </li>
