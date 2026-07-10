@@ -4,7 +4,8 @@ import { contextBridge, ipcRenderer } from "electron";
 contextBridge.exposeInMainWorld('tableAPI', {
     createTable: (name: string, password: string) => ipcRenderer.invoke('table:create-table', name, password),
     getTableNames: () => ipcRenderer.invoke('table:get-all-tables'),
-    deleteTable: (id: number, password: string) => ipcRenderer.invoke('table:delete-table', id, password)
+    deleteTable: (id: number, password: string) => ipcRenderer.invoke('table:delete-table', id, password),
+    getSelectedTable: (id: number, password: string) => ipcRenderer.invoke('table:access-table', id, password)
 
 });
 
