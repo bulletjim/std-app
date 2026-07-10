@@ -1,3 +1,5 @@
+import { logger } from "./util/logger";
+
 export const navigateTo = (targetViewId: string) : void => {
     
     const allViews = document.querySelectorAll('.view');
@@ -13,7 +15,7 @@ export const navigateTo = (targetViewId: string) : void => {
         targetView.classList.add('active');
 
     } else {
-        console.log(`[FRONTEND:ROUTING]: targetViewID: ${targetViewId} not found`);
+        logger.error('ROUTER', `TargetViewId: ${targetViewId} not found`);
     }
 }
 

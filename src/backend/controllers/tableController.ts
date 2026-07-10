@@ -2,13 +2,14 @@ import { ipcMain, IpcMainInvokeEvent } from "electron"
 import * as tableService from "../services/tableService"
 import { ServerResponse } from "@backend/interfaces/controllerTypes";
 import { TableDTO } from "@backend/interfaces/tableTypes";
+import { logger } from "../util/logger";
 
 export const setupTableHandlers = () => {
     ipcMain.handle('table:create-table', async (event: IpcMainInvokeEvent, tableName: string, password: string) : Promise<ServerResponse<number>> => {
         try{
             return await tableService.saveTable(tableName, password) as ServerResponse<number>;
         } catch(error){
-            console.log("[ERROR] ", error);
+            logger.error('BACKEND/CONTROLLER', 'Internal Server Error', error);
             return {success: false, error: "Internal Server Error: Unable to create the table"};
         }
     })
@@ -30,7 +31,7 @@ export const setupTableHandlers = () => {
             }
             
         } catch(error){
-            console.log("[ERROR] ", error);
+            logger.error('BACKEND/CONTROLLER', 'Internal Server Error', error);
             return {success: false, error: "Internal Server Error"};
         }
     })
@@ -39,7 +40,7 @@ export const setupTableHandlers = () => {
         try {
             return await tableService.checkDeleteTable(id, password);
         } catch(error){
-            console.log("[ERROR] ", error);
+            logger.error('BACKEND/CONTROLLER', 'Internal Server Error', error);
             return {success: false, error: "Internal Server Error"};
         }
     })

@@ -1,3 +1,4 @@
+import { logger } from "../util/logger";
 import { fetchTableNames } from "../api";
 import { navigateTo } from "../router";
 
@@ -6,7 +7,7 @@ export const loadDashboard = async (): Promise<void> => {
     const template = document.getElementById('tpl-table-list-item') as HTMLTemplateElement;
 
     if (!container || !template) {
-        console.error('[DASHBOARD/ERROR]: container or template not found');
+        logger.error('DASHBOARD', 'container or template not found');
         return;
     }
 
@@ -63,7 +64,7 @@ export const loadDashboard = async (): Promise<void> => {
         });
 
     } catch (error) {
-        console.error('[DASHBOARD/ERROR]: ', error);
+        logger.error('DASHBOARD', 'Context Change Failed', error);
         container.innerHTML = '<p style="color: red;">Loading Data Failed</p>';
     }
 };

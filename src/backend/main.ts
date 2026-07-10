@@ -1,8 +1,9 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { createDb } from './db/tableRepository';
 import { setupTableHandlers } from './controllers/tableController';
+import { logger } from './util/logger';
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;
@@ -15,6 +16,8 @@ app.whenReady().then(() => {
 
   const userPath = app.getPath('userData');
   const dbPath = path.join(userPath, 'std.db');
+
+  logger.info('BACKEND/MAIN', 'App Initializing');
   
   // db initialization
   createDb(dbPath);
@@ -57,6 +60,7 @@ const createWindow = () => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
+  logger.info('BACKEND/MAIN', 'System Is Shutting Down');
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -69,4 +73,14 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ipcMain.on("log-message", (event, level: 'info' | 'warn' | 'error', context: string, message: string, data?: any) => {
+  const frontendContext = `FRONTEND:${context}`;
+
+    if (level === 'info') logger.info(frontendContext, message, data);
+    if (level === 'warn') logger.warn(frontendContext, message, data);
+    if (level === 'error') logger.error(frontendContext, message, data);
+
+})
 

@@ -1,3 +1,4 @@
+import { logger } from "../util/logger";
 import { createTable } from "../api";
 import { navigateTo } from "../router";
 import { loadDashboard } from "./dashboard";
@@ -7,7 +8,7 @@ export const changeToCreateTable = () : void => {
     const form = document.getElementById('form-create-table') as HTMLFormElement;
 
     if(!form) {
-        console.error('[CREATE-TABLE/ERROR]: Form element not found');
+        logger.error('CREATE-TABLE', 'Form element not found');
         return;
     }
 
@@ -28,17 +29,18 @@ export const changeToCreateTable = () : void => {
 
             const success = await createTable(tableName, password);
             if(success) {
-                console.log('[CREATE-TABLE/LOG] Table Created');
+                logger.info('CREATE-TABLE', `Table: ${tableName} created`);
                 form.reset();
                 navigateTo('view-dashboard');
                 loadDashboard();
 
             } else {
                 alert('Wrong Passoword');
+                logger.warn('CREATE-TABLE', 'The password is invalid');
             }
 
         } catch (error) {
-            console.error('[CRETATE-TABLE/ERROR]: ', error);
+            logger.error('CREATE-TABLE', "Context Change Failed", error);
         }
 
     })

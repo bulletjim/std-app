@@ -2,6 +2,8 @@ import { PasswordResponse } from '@backend/interfaces/serviceTypes';
 import util from 'node:util';
 import crypto from 'node:crypto';
 import { DecryptionResponse, EncryptionResponse } from '@backend/interfaces/securityTypes';
+import { logger } from '../util/logger';
+
 
 const pbkdf2Async = util.promisify(crypto.pbkdf2);
 
@@ -17,7 +19,7 @@ export const hashPassword = async (unhashedPassword: string) : Promise<PasswordR
             salt: saltBuffer.toString('hex')
         }
     } catch (error) {
-        console.log("[ERROR] ", error);
+        logger.error('BACKEND/SERVICE', 'Error Hashing Password', error);
         return {
             success: false,
             error: "Error generating password hash"
@@ -44,7 +46,7 @@ export const encryptData =  (data: string, secretKeyBuffer: Buffer) : Encryption
             encryptedContent: encryptedData
         }
     } catch (error) {
-        console.log("[ERROR] ", error);
+        logger.error('BACKEND/SERVICE', 'Error Encrypting Data', error);
         return {
             success: false,
             error: "Data Encryption failed"
@@ -80,7 +82,7 @@ export const decryptData = (encryptedData: string, secretKeyBuffer: Buffer) : De
         }
 
     } catch(error){
-        console.log("[ERROR] ", error);
+        logger.error('BACKEND/SERVICE', 'Error Decrypting Data', error);
         return {
             success: false,
             error: "Error decrypting the content, password invalid or corrupted data"

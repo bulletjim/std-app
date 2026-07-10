@@ -1,11 +1,12 @@
 import { loadDashboard } from "./components/dashboard";
 import { changeToCreateTable } from "./components/createTable";
 import { navigateTo } from "./router";
+import { logger } from "./util/logger";
 
 document.addEventListener('DOMContentLoaded', () => {
   
   // App Components Initialization
-  console.log('[ROUTER/INFO]: App Initialised');
+  logger.info('RENDERER', 'App Initialised');
 
   loadDashboard();
 
