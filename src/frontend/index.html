@@ -77,6 +77,36 @@
       </article>
     </dialog>
 
+    <dialog id="modal-open-table">
+      <article>
+        <h2>Unlock Table</h2>
+        <p>Insert Table Password</p>
+        <form id="form-open-table">
+          <div>
+            <label for="open-password">Password</label>
+            <input type="password" id="open-password" required>
+          </div>
+          <footer>
+            <button type="button" id="btn-cancel-open">Cancel</button>
+            <button type="submit" id="btn-confirm-open">Open</button>
+          </footer>
+        </form>
+      </article>
+    </dialog>
+
+    <dialog id="modal-row-form">
+      <article>
+        <h2 id="modal-row-title">Add/Edit Row</h2>
+        <form id="form-dynamic-row">
+          <div id="dynamic-inputs-container"></div>
+          <footer>
+            <button type="button" id="btn-cancel-row">Cancel</button>
+            <button type="submit" id="btn-save-row">Save</button>
+          </footer>
+        </form>
+      </article>
+    </dialog>
+
     <template id="tpl-table-list-item">
       <li>
         <article class="table-card">

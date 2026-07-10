@@ -40,7 +40,7 @@ export const deleteTable = (id: number) => {
 }
 
 export const getTableById = (id: number) : TableDTO | null => {
-    const sql = db.prepare(`SELECT id as id, table_name as tableName, password_hash AS passwordHash, password_salt AS passwordSalt FROM user_tables WHERE id = ?`);
+    const sql = db.prepare(`SELECT id as id, table_name as tableName, password_hash AS passwordHash, password_salt AS passwordSalt, encrypted_content AS encryptedContent FROM user_tables WHERE id = ?`);
     const result = sql.get(id) as TableDTO;
 
     if(!result){
@@ -50,6 +50,7 @@ export const getTableById = (id: number) : TableDTO | null => {
         id: result.id,
         tableName: result.tableName,
         passwordHash: result.passwordHash,
-        passwordSalt: result.passwordSalt
+        passwordSalt: result.passwordSalt,
+        encryptedContent: result.encryptedContent
     }; 
 }

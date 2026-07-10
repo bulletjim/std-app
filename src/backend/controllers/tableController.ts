@@ -1,7 +1,7 @@
 import { ipcMain, IpcMainInvokeEvent } from "electron"
 import * as tableService from "../services/tableService"
 import { ServerResponse } from "@backend/interfaces/controllerTypes";
-import { TableDTO } from "@backend/interfaces/tableTypes";
+import { DecryptedTableDTO, TableDTO } from "@backend/interfaces/tableTypes";
 import { logger } from "../util/logger";
 
 export const setupTableHandlers = () => {
@@ -42,6 +42,15 @@ export const setupTableHandlers = () => {
         } catch(error){
             logger.error('BACKEND/CONTROLLER', 'Internal Server Error', error);
             return {success: false, error: "Internal Server Error"};
+        }
+    })
+
+    ipcMain.handle('table:access-table', async (event: IpcMainInvokeEvent, id: number, password: string) : Promise<ServerResponse<DecryptedTableDTO>> => {
+        try{
+            return await tableService.checkSelectedTable(id, password);
+        } catch(error){
+            logger.error('BACKEND/CONTROLLER', 'Internal Server Error', error);
+            return {success: false, error: "Internal Servver Error"};
         }
     })
 }

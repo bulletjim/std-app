@@ -1,8 +1,10 @@
 import { logger } from "../util/logger";
-import { deleteSelectedTable, fetchTableNames } from "../api";
+import { accessTable, deleteSelectedTable, fetchTableNames } from "../api";
 import { navigateTo } from "../router";
+import { loadTableDetail } from "./tableDetails";
 
-let isModalInitialized = false;
+let isDeleteModalInitialized = false;
+let isOpenModalInitialized = false;
 
 export const loadDashboard = async (): Promise<void> => {
     const container = document.getElementById('table-list-container');
@@ -14,6 +16,7 @@ export const loadDashboard = async (): Promise<void> => {
     }
     
     setupModalEvents();
+    setupOpenTableModal();
 
     try {
         const tables = await fetchTableNames();
@@ -50,7 +53,11 @@ export const loadDashboard = async (): Promise<void> => {
             const deleteBtn = tableTemplate.querySelector('.tpl-btn-delete');
 
             openBtn?.addEventListener('click', () => {
-                navigateTo('view-table-detail');
+                const modal = document.getElementById('modal-open-table') as HTMLDialogElement;
+                const form = document.getElementById('form-open-table') as HTMLFormElement;
+
+                form?.setAttribute('data-target-id', table.id.toString());
+                modal?.showModal();
             });
                 
             deleteBtn?.addEventListener('click', () => {
@@ -83,7 +90,7 @@ export const loadDashboard = async (): Promise<void> => {
 };
 
 const setupModalEvents = () => {
-    if (isModalInitialized) return;
+    if (isDeleteModalInitialized) return;
 
     const modal = document.getElementById('modal-confirm') as HTMLDialogElement;
     const confirmBtn = document.getElementById('btn-modal-confirm');
@@ -125,5 +132,48 @@ const setupModalEvents = () => {
         }
     });
 
-    isModalInitialized = true;
+    isDeleteModalInitialized = true;
+};
+
+export const setupOpenTableModal = () => {
+    if (isOpenModalInitialized) return;
+
+    const modal = document.getElementById('modal-open-table') as HTMLDialogElement;
+    const form = document.getElementById('form-open-table') as HTMLFormElement;
+    const cancelBtn = document.getElementById('btn-cancel-open') as HTMLButtonElement;
+
+    cancelBtn?.addEventListener('click', () => {
+        modal.close();
+        form.reset();
+    });
+
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const tableId = form.getAttribute('data-target-id');
+        const passwordInput = document.getElementById('open-password') as HTMLInputElement;
+        const password = passwordInput.value;
+
+        if (tableId && password) {
+            try {
+                logger.info('DASHBOARD', `Trying to unlock table with id: ${tableId}`);
+                const tableData = await accessTable(Number(tableId), password);
+                if (tableData) {
+                    modal.close();
+                    form.reset();
+
+                    loadTableDetail(tableData);
+                    navigateTo('view-table-detail');
+                } else {
+                    alert("Wrong Password");
+                    passwordInput.value = '';
+                }
+               
+            } catch (error) {
+                logger.error('DASHBOARD', 'Table access has failed', error);
+            }
+        }
+    });
+
+    isOpenModalInitialized = true;
 };

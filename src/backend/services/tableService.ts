@@ -1,7 +1,7 @@
-import { CreateTableRequest, TableDTO } from "@backend/interfaces/tableTypes"
+import { CreateTableRequest, DecryptedTableDTO, TableData, TableDTO } from "@backend/interfaces/tableTypes"
 import * as tableRepository from "../db/tableRepository"
 import { ServiceResponse } from "@backend/interfaces/serviceTypes";
-import { checkPassword, encryptData, extractSecreKey, hashPassword } from "../services/securityService";
+import { checkPassword, decryptData, encryptData, extractSecreKey, hashPassword } from "../services/securityService";
 
 export const saveTable = async (tableName: string, unhashedPassword: string) : Promise<ServiceResponse<number>> => {
     const hashResult = await hashPassword(unhashedPassword);
@@ -44,7 +44,7 @@ export const saveTable = async (tableName: string, unhashedPassword: string) : P
 
 export const verifyTableNames = async () : Promise<TableDTO[] | null> => {
     const tableNames = tableRepository.getAllTableInfos();
-    if(tableNames !== null){
+    if(tableNames.length !== 0){
         return tableNames;
     }
 
@@ -83,5 +83,39 @@ export const checkDeleteTable = async (id: number, unhashedPassword: string) : P
             error: "Table Not Found"
         }
     } 
+    
+}
+
+export const checkSelectedTable = async (id: number, password: string) : Promise<ServiceResponse<DecryptedTableDTO>> => {
+    const table = tableRepository.getTableById(id);
+    if(table){
+        const checkedPassword = await checkPassword(table.passwordHash, password, table.passwordSalt);
+        if(checkedPassword){
+            const secretKey = await extractSecreKey(password, table.passwordSalt);
+            const decryptedData = decryptData(table.encryptedContent as string, secretKey);
+            if(decryptedData.success){
+                const decryptedTable : DecryptedTableDTO= {
+                    id: table.id,
+                    tableName: table.tableName,
+                    decryptedContent: JSON.parse(decryptedData.decryptedContent as string) as TableData
+
+                }
+                
+                return {
+                    success: true,
+                    value: decryptedTable
+                }
+            }
+        } else {
+            return {
+                success: false,
+                error: "Password is invalid"
+            }
+        }
+    }
+    return {
+        success: false,
+        error: "Table not found"
+    }
     
 }

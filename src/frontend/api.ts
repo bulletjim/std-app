@@ -1,4 +1,4 @@
-import { TableDTO } from "@backend/interfaces/tableTypes";
+import { DecryptedTableDTO, TableDTO } from "@backend/interfaces/tableTypes";
 import { logger } from "./util/logger";
 
 export const createTable = async (tableName: string, password: string) : Promise<boolean> => {
@@ -46,5 +46,20 @@ export const deleteSelectedTable = async (id: number, password: string) : Promis
     } catch(error) {
         logger.error('API', 'API call error', error);
         return false;
+    }
+}
+
+export const accessTable = async (id: number, password: string) : Promise<DecryptedTableDTO | null> => {
+    try{
+        const response = await window.tableAPI.getSelectedTable(id, password);
+        if(response.success && response.value) {
+            logger.info('API', 'API call successful');
+            return response.value;
+        }
+        logger.warn('API', 'API call failed');
+        return null;
+    } catch(error){
+        logger.error('API', 'API call error', error);
+        return null;
     }
 }
