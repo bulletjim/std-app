@@ -1,6 +1,8 @@
 import { logger } from "../util/logger";
-import { fetchTableNames } from "../api";
+import { deleteSelectedTable, fetchTableNames } from "../api";
 import { navigateTo } from "../router";
+
+let isModalInitialized = false;
 
 export const loadDashboard = async (): Promise<void> => {
     const container = document.getElementById('table-list-container');
@@ -10,6 +12,8 @@ export const loadDashboard = async (): Promise<void> => {
         logger.error('DASHBOARD', 'container or template not found');
         return;
     }
+    
+    setupModalEvents();
 
     try {
         const tables = await fetchTableNames();
@@ -51,6 +55,15 @@ export const loadDashboard = async (): Promise<void> => {
                 
             deleteBtn?.addEventListener('click', () => {
                 const modal = document.getElementById('modal-confirm') as HTMLDialogElement;
+                const confirmBtn = document.getElementById('btn-modal-confirm') as HTMLButtonElement;
+                const passwordInput = document.getElementById('modal-password-input') as HTMLInputElement;
+                if(confirmBtn) {
+                    confirmBtn.setAttribute('data-target-id', table.id.toString());
+                }
+                if(passwordInput){
+                    passwordInput.value = '';
+                }
+
                 modal?.showModal();
             });
 
@@ -67,4 +80,50 @@ export const loadDashboard = async (): Promise<void> => {
         logger.error('DASHBOARD', 'Context Change Failed', error);
         container.innerHTML = '<p style="color: red;">Loading Data Failed</p>';
     }
+};
+
+const setupModalEvents = () => {
+    if (isModalInitialized) return;
+
+    const modal = document.getElementById('modal-confirm') as HTMLDialogElement;
+    const confirmBtn = document.getElementById('btn-modal-confirm');
+    const cancelBtn = document.getElementById('btn-modal-cancel');
+
+    cancelBtn?.addEventListener('click', () => {
+        modal.close();
+    });
+
+    confirmBtn?.addEventListener('click', async (e) => {
+        const target = e.target as HTMLElement;
+        const passwordInput = document.getElementById('modal-password-input') as HTMLInputElement;
+        
+        const tableId = target.getAttribute('data-target-id');
+        const password = passwordInput?.value;
+
+        if (!password) {
+            alert("Please insert table password");
+            return;
+        }
+
+        if (tableId && password) {
+            logger.warn('DASHBOARD', `Requested table deletion id: ${tableId}`);
+            
+            try {
+                const result = await deleteSelectedTable(Number(tableId), password);
+                
+                if (result) {
+                    modal.close();
+                    logger.info('DASHBOARD', `Table: ${tableId} deleted succesfully`);
+                    await loadDashboard();
+                } else {
+                    logger.warn('DASHBOARD', 'Password provided is not valid');
+                    alert("Password provided is not valid");
+                }        
+            } catch (error) {
+                logger.error('DASHBOARD', 'Table deletion has failed', error);
+            }
+        }
+    });
+
+    isModalInitialized = true;
 };

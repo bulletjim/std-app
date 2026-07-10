@@ -36,7 +36,7 @@ export const setupTableHandlers = () => {
         }
     })
     
-    ipcMain.handle('table:delete-table', async (event: IpcMainInvokeEvent, id: number, password: string) => {
+    ipcMain.handle('table:delete-table', async (event: IpcMainInvokeEvent, id: number, password: string) : Promise<ServerResponse<number>> => {
         try {
             return await tableService.checkDeleteTable(id, password);
         } catch(error){

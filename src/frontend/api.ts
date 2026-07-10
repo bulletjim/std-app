@@ -29,7 +29,22 @@ export const fetchTableNames = async () : Promise<TableDTO[] | null> => {
         logger.warn('API', 'API call failed');
         return null;
     } catch (error) {
-        logger.error('API', 'API call failed', error);
+        logger.error('API', 'API call error', error);
         return null;
+    }
+}
+
+export const deleteSelectedTable = async (id: number, password: string) : Promise<boolean> => {
+    try{
+        const response = await window.tableAPI.deleteTable(id, password);
+        if(response.success) {
+            logger.info('API', 'API call successful');
+            return true;
+        }
+        logger.warn('API', 'API call failed');
+        return false; 
+    } catch(error) {
+        logger.error('API', 'API call error', error);
+        return false;
     }
 }
