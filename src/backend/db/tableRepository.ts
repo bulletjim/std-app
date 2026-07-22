@@ -1,5 +1,5 @@
 import SQLite from "better-sqlite3";
-import { CreateTableRequest, TableDTO } from "../interfaces/tableTypes";
+import { CreateTableRequest, TableDTO } from "@backend/interfaces/tableTypes";
 
 let db: SQLite.Database;
 
@@ -27,18 +27,20 @@ export const createTable = (table: CreateTableRequest) => {
     return result.lastInsertRowid;
 };
 
-export const countTotalTables = () => {
-    const result = db.prepare(`SELECT COUNT(*) AS total FROM user_tables`).get() as {total: number};
-    return result ? result.total : 0;
+
+export const getAllTableInfos = () : TableDTO[] => {
+    const rows = db.prepare(`SELECT id AS id, table_name AS tableName FROM user_tables`).all() as TableDTO[];
+    return rows;
 }
 
-export const deleteTable = (id: number) => {
+
+export const deleteTable = (id: number) : number => {
     const result = db.prepare(`DELETE FROM user_tables WHERE id = ?`).run(id);
     return result.changes;
 }
 
 export const getTableById = (id: number) : TableDTO | null => {
-    const sql = db.prepare(`SELECT id as id, password_hash AS passwordHash, password_salt AS passwordSalt FROM user_tables WHERE id = ?`);
+    const sql = db.prepare(`SELECT id as id, table_name as tableName, password_hash AS passwordHash, password_salt AS passwordSalt, encrypted_content AS encryptedContent FROM user_tables WHERE id = ?`);
     const result = sql.get(id) as TableDTO;
 
     if(!result){
@@ -46,7 +48,15 @@ export const getTableById = (id: number) : TableDTO | null => {
     }
     return {
         id: result.id,
+        tableName: result.tableName,
         passwordHash: result.passwordHash,
-        passwordSalt: result.passwordSalt
+        passwordSalt: result.passwordSalt,
+        encryptedContent: result.encryptedContent
     }; 
+}
+
+export const updateTable = (updatedTable: TableDTO) : number => {
+    const query = db.prepare(`UPDATE user_tables SET table_name = @tableName, password_hash = @passwordHash, password_salt = @passwordSalt, encrypted_content = @encryptedContent WHERE id = @id`);
+    const result = query.run(updatedTable);
+    return result.changes;
 }
