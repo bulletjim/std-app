@@ -1,4 +1,4 @@
-import { DecryptedTableDTO, TableDTO } from "@backend/interfaces/tableTypes";
+import { DecryptedTableDTO, TableData, TableDTO } from "@backend/interfaces/tableTypes";
 import { logger } from "./util/logger";
 
 export const createTable = async (tableName: string, password: string) : Promise<boolean> => {
@@ -61,5 +61,20 @@ export const accessTable = async (id: number, password: string) : Promise<Decryp
     } catch(error){
         logger.error('API', 'API call error', error);
         return null;
+    }
+}
+
+export const saveTableContent = async (id: number, password: string, content: TableData) : Promise<boolean> => {
+    try {
+        const response = await window.tableAPI.updateTableContent(id, password, content);
+        if(response.success){
+            logger.info('API', 'API call succesful');
+            return true;
+        }
+        logger.warn('API', 'API call failed');
+        return false;
+    } catch(error){
+        logger.error('API', 'API call error', error);
+        return false;
     }
 }

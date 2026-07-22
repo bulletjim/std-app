@@ -34,7 +34,7 @@ export const getAllTableInfos = () : TableDTO[] => {
 }
 
 
-export const deleteTable = (id: number) => {
+export const deleteTable = (id: number) : number => {
     const result = db.prepare(`DELETE FROM user_tables WHERE id = ?`).run(id);
     return result.changes;
 }
@@ -53,4 +53,10 @@ export const getTableById = (id: number) : TableDTO | null => {
         passwordSalt: result.passwordSalt,
         encryptedContent: result.encryptedContent
     }; 
+}
+
+export const updateTable = (updatedTable: TableDTO) : number => {
+    const query = db.prepare(`UPDATE user_tables SET table_name = @tableName, password_hash = @passwordHash, password_salt = @passwordSalt, encrypted_content = @encryptedContent WHERE id = @id`);
+    const result = query.run(updatedTable);
+    return result.changes;
 }

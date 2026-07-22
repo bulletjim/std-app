@@ -46,16 +46,13 @@
       <section id="view-table-detail" class="view hidden" aria-labelledby="detail-title">
         <header>
           <h2 id="detail-title">Table Name</h2>
+          <button id="btn-add-col">Add Column</button>
           <button id="btn-add-row">Add Row</button>
+          <button id="btn-save-db" class="primary">Save</button>
         </header>
 
         <table class="data-table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Content</th>
-              <th scope="col">Actions</th>
-            </tr>
+          <thead id="table-head-row">
           </thead>
           <tbody id="table-body-container">
           </tbody>
@@ -94,14 +91,17 @@
       </article>
     </dialog>
 
-    <dialog id="modal-row-form">
+    <dialog id="modal-add-column">
       <article>
-        <h2 id="modal-row-title">Add/Edit Row</h2>
-        <form id="form-dynamic-row">
-          <div id="dynamic-inputs-container"></div>
+        <h2>Add New Column</h2>
+        <form id="form-add-column">
+          <div>
+            <label for="new-column-name">Column Name</label>
+            <input type="text" id="new-column-name" placeholder="e.g. Email" required>
+          </div>
           <footer>
-            <button type="button" id="btn-cancel-row">Cancel</button>
-            <button type="submit" id="btn-save-row">Save</button>
+            <button type="button" id="btn-cancel-column">Cancel</button>
+            <button type="submit">Add</button>
           </footer>
         </form>
       </article>

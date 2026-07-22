@@ -16,8 +16,9 @@ app.whenReady().then(() => {
 
   const userPath = app.getPath('userData');
   const dbPath = path.join(userPath, 'std.db');
+  console.log(dbPath);
 
-  logger.info('BACKEND/MAIN', 'App Initializing');
+  logger.info('BACKEND-MAIN', 'App Initializing');
   
   // db initialization
   createDb(dbPath);
@@ -60,7 +61,7 @@ const createWindow = () => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  logger.info('BACKEND/MAIN', 'System Is Shutting Down');
+  logger.info('BACKEND-MAIN', 'System Is Shutting Down');
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -76,7 +77,7 @@ app.on('activate', () => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ipcMain.on("log-message", (event, level: 'info' | 'warn' | 'error', context: string, message: string, data?: any) => {
-  const frontendContext = `FRONTEND:${context}`;
+  const frontendContext = `FRONTEND-${context}`;
 
     if (level === 'info') logger.info(frontendContext, message, data);
     if (level === 'warn') logger.warn(frontendContext, message, data);

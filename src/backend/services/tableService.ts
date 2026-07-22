@@ -119,3 +119,43 @@ export const checkSelectedTable = async (id: number, password: string) : Promise
     }
     
 }
+
+export const saveTableContent = async (id: number, password: string, content: TableData) : Promise<ServiceResponse<number>> => {
+    const table = tableRepository.getTableById(id);
+    if(table) {
+        const checkedPassword = await checkPassword(table.passwordHash, password, table.passwordSalt);
+        if(checkedPassword) {
+            const extractedSecretKey = await extractSecreKey(password, table.passwordSalt);
+            const stringifiedContent = JSON.stringify(content);
+
+            const encryptedContent = encryptData(stringifiedContent, extractedSecretKey);
+            if(!encryptedContent.success || !encryptedContent.encryptedContent){
+                return {success: false, error: "Table not updated"}
+            }
+            const updatedTable: TableDTO = {
+                id: table.id,
+                tableName: table.tableName,
+                passwordHash: table.passwordHash,
+                passwordSalt: table.passwordSalt,
+                encryptedContent: encryptedContent.encryptedContent
+            } 
+
+            const result = tableRepository.updateTable(updatedTable);
+            if(result === 0){
+                return {
+                    success: false,
+                    error: "Table not Updated"
+                }
+            } else {
+                return {
+                    success: true,
+                    value: result
+                }
+            }
+        }
+    } 
+    return {
+        success: false,
+        error: "Table not found"
+    }
+}

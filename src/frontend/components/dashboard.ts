@@ -162,7 +162,7 @@ export const setupOpenTableModal = () => {
                     modal.close();
                     form.reset();
 
-                    loadTableDetail(tableData);
+                    loadTableDetail(tableData, password);
                     navigateTo('view-table-detail');
                 } else {
                     alert("Wrong Password");

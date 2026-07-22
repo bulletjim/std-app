@@ -1,5 +1,5 @@
 import { ServerResponse } from "@backend/interfaces/controllerTypes";
-import { DecryptedTableDTO, TableDTO } from "@backend/interfaces/tableTypes";
+import { DecryptedTableDTO, TableData, TableDTO } from "@backend/interfaces/tableTypes";
 
 export {};
 
@@ -10,6 +10,7 @@ declare global {
       getTableNames: () => Promise<ServerResponse<TableDTO[] | null>>;
       deleteTable: (id: number, password: string) => Promise<ServerResponse<number>>;
       getSelectedTable: (id: number, password: string) => Promise<ServerResponse<DecryptedTableDTO>>;
+      updateTableContent: (id: number, password: string, content: TableData) => Promise<ServerResponse<number>>;
     };
     logAPI: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
