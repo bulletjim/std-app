@@ -50,7 +50,7 @@
           <button id="btn-add-row">Add Row</button>
           <button id="btn-save-db" class="primary">Save</button>
         </header>
-
+        <div id="table-empty-state" class="hidden"></div>
         <table class="data-table">
           <thead id="table-head-row">
           </thead>
@@ -105,6 +105,12 @@
           </footer>
         </form>
       </article>
+    </dialog>
+
+    <dialog id="modal-unsaved-changes">
+      <p>You have unsaved changes, do you want to exit anyway?</p>
+      <button id="btn-unsaved-cancel">No</button>
+      <button id="btn-unsaved-confirm">Yes</button>
     </dialog>
 
     <template id="tpl-table-list-item">

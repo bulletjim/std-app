@@ -120,7 +120,7 @@ export const checkSelectedTable = async (id: number, password: string) : Promise
     
 }
 
-export const saveTableContent = async (id: number, password: string, content: TableData) : Promise<ServiceResponse<number>> => {
+export const saveTableContent = async (id: number, tableName: string, password: string, content: TableData) : Promise<ServiceResponse<number>> => {
     const table = tableRepository.getTableById(id);
     if(table) {
         const checkedPassword = await checkPassword(table.passwordHash, password, table.passwordSalt);
@@ -134,7 +134,7 @@ export const saveTableContent = async (id: number, password: string, content: Ta
             }
             const updatedTable: TableDTO = {
                 id: table.id,
-                tableName: table.tableName,
+                tableName: tableName,
                 passwordHash: table.passwordHash,
                 passwordSalt: table.passwordSalt,
                 encryptedContent: encryptedContent.encryptedContent

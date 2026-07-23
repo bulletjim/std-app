@@ -54,9 +54,9 @@ export const setupTableHandlers = () => {
         }
     })
 
-    ipcMain.handle('table:update-table', async (event: IpcMainInvokeEvent, id: number, password: string, content: TableData) : Promise<ServerResponse<number>> => {
+    ipcMain.handle('table:update-table', async (event: IpcMainInvokeEvent, id: number, tableName: string , password: string, content: TableData) : Promise<ServerResponse<number>> => {
         try{
-            return await tableService.saveTableContent(id, password, content);
+            return await tableService.saveTableContent(id, tableName, password, content);
         } catch(error) {
             logger.error('BACKEND-CONTROLLER', 'Internal Server Error', error);
             return {success: false, error: "Internal Server Error"};

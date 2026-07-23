@@ -7,7 +7,7 @@ contextBridge.exposeInMainWorld('tableAPI', {
     getTableNames: () => ipcRenderer.invoke('table:get-all-tables'),
     deleteTable: (id: number, password: string) => ipcRenderer.invoke('table:delete-table', id, password),
     getSelectedTable: (id: number, password: string) => ipcRenderer.invoke('table:access-table', id, password),
-    updateTableContent: (id: number, password: string, content: TableData) => ipcRenderer.invoke('table:update-table', id, password, content)
+    updateTableContent: (id: number, tableName: string, password: string, content: TableData) => ipcRenderer.invoke('table:update-table', id, tableName, password, content)
 
 });
 

@@ -10,7 +10,7 @@ declare global {
       getTableNames: () => Promise<ServerResponse<TableDTO[] | null>>;
       deleteTable: (id: number, password: string) => Promise<ServerResponse<number>>;
       getSelectedTable: (id: number, password: string) => Promise<ServerResponse<DecryptedTableDTO>>;
-      updateTableContent: (id: number, password: string, content: TableData) => Promise<ServerResponse<number>>;
+      updateTableContent: (id: number, tableName: string, password: string, content: TableData) => Promise<ServerResponse<number>>;
     };
     logAPI: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

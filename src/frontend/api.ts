@@ -64,9 +64,9 @@ export const accessTable = async (id: number, password: string) : Promise<Decryp
     }
 }
 
-export const saveTableContent = async (id: number, password: string, content: TableData) : Promise<boolean> => {
+export const saveTableContent = async (id: number, tableName: string, password: string, content: TableData) : Promise<boolean> => {
     try {
-        const response = await window.tableAPI.updateTableContent(id, password, content);
+        const response = await window.tableAPI.updateTableContent(id, tableName, password, content);
         if(response.success){
             logger.info('API', 'API call succesful');
             return true;

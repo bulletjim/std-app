@@ -189,6 +189,21 @@ table.data-table {
     overflow: hidden;
 }
 
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px dashed #444;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.empty-table-cell {
+  text-align: center;
+  padding: 1.5rem !important;
+  color: #888;
+}
+
 table.data-table th, table.data-table td {
     padding: 12px 16px;
     text-align: left;
@@ -199,6 +214,41 @@ table.data-table th {
     background-color: #2a2a2a;
     color: var(--text-secondary);
     font-weight: 500;
+}
+
+/* --- Table Header & Column Delete Button --- */
+.th-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+button.btn-delete-col {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 2px 8px !important;
+  font-size: 13px !important;
+  font-weight: bold !important;
+  line-height: 1 !important;
+  cursor: pointer;
+  border-radius: 4px;
+  
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+
+th:hover button.btn-delete-col {
+  opacity: 0.85;
+}
+
+button.btn-delete-col:hover {
+  opacity: 1 !important;
+  color: #ffffff !important;
+  background-color: var(--danger-color) !important;
+  border-color: var(--danger-hover) !important;
 }
 
 /* Modal */
