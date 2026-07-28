@@ -1,8 +1,24 @@
+/**
+ * Service managing business operations for table management,
+ * credential validation, payload encryption, and database interactions.
+ * 
+ * @module TableService
+ */
+
 import { CreateTableRequest, DecryptedTableDTO, TableData, TableDTO } from "@backend/interfaces/tableTypes"
 import * as tableRepository from "../db/tableRepository"
-import { ServiceResponse } from "@backend/interfaces/serviceTypes";
-import { checkPassword, decryptData, encryptData, extractSecreKey, hashPassword } from "../services/securityService";
+import { ServiceResponse } from "@backend/interfaces/index";
+import { checkPassword, decryptData, encryptData, extractSecreKey, hashPassword } from "./securityService";
 
+/**
+ * Creates a new encrypted table record with default empty content.
+ * Hashes the user password, derives an encryption key, encrypts the initial payload,
+ * and saves the resulting record to the database repository.
+ * 
+ * @param tableName - Display name for the new table.
+ * @param unhashedPassword - Plaintext password used for authentication and key derivation.
+ * @returns A promise resolving to a {@link ServiceResponse} containing the inserted table ID.
+ */
 export const saveTable = async (tableName: string, unhashedPassword: string) : Promise<ServiceResponse<number>> => {
     const hashResult = await hashPassword(unhashedPassword);
     if(!hashResult.success || !hashResult.hashedPassword || !hashResult.salt){
@@ -41,7 +57,11 @@ export const saveTable = async (tableName: string, unhashedPassword: string) : P
 
 }
 
-
+/**
+ * Fetches basic metadata for all stored user tables.
+ * 
+ * @returns A promise resolving to an array of {@link TableDTO} objects or `null` if no tables exist.
+ */
 export const verifyTableNames = async () : Promise<TableDTO[] | null> => {
     const tableNames = tableRepository.getAllTableInfos();
     if(tableNames.length !== 0){
@@ -52,7 +72,13 @@ export const verifyTableNames = async () : Promise<TableDTO[] | null> => {
     
 }
 
-
+/**
+ * Authenticates user credentials and deletes a specified table upon authorization.
+ * 
+ * @param id - Database identifier of the table to delete.
+ * @param unhashedPassword - Password provided to authorize the deletion.
+ * @returns A promise resolving to a {@link ServiceResponse} with the number of deleted rows.
+ */
 export const checkDeleteTable = async (id: number, unhashedPassword: string) : Promise<ServiceResponse<number>> => {
 
     const table = tableRepository.getTableById(id);
@@ -86,6 +112,13 @@ export const checkDeleteTable = async (id: number, unhashedPassword: string) : P
     
 }
 
+/**
+ * Authenticates user credentials and decrypts table contents for display.
+ * 
+ * @param id - Database identifier of the requested table.
+ * @param password - Password used to verify credentials and derive the decryption key.
+ * @returns A promise resolving to a {@link ServiceResponse} containing the {@link DecryptedTableDTO}.
+ */
 export const checkSelectedTable = async (id: number, password: string) : Promise<ServiceResponse<DecryptedTableDTO>> => {
     const table = tableRepository.getTableById(id);
     if(table){
@@ -120,7 +153,16 @@ export const checkSelectedTable = async (id: number, password: string) : Promise
     
 }
 
-export const saveTableContent = async (id: number, password: string, content: TableData) : Promise<ServiceResponse<number>> => {
+/**
+ * Encrypts updated table contents and persists changes to the database.
+ * 
+ * @param id - Database identifier of the target table.
+ * @param tableName - Current display name of the table.
+ * @param password - Password required to derive the encryption key.
+ * @param content - Plaintext {@link TableData} payload to encrypt and store.
+ * @returns A promise resolving to a {@link ServiceResponse} with the update operation result.
+ */
+export const saveTableContent = async (id: number, tableName: string, password: string, content: TableData) : Promise<ServiceResponse<number>> => {
     const table = tableRepository.getTableById(id);
     if(table) {
         const checkedPassword = await checkPassword(table.passwordHash, password, table.passwordSalt);
@@ -134,7 +176,7 @@ export const saveTableContent = async (id: number, password: string, content: Ta
             }
             const updatedTable: TableDTO = {
                 id: table.id,
-                tableName: table.tableName,
+                tableName: tableName,
                 passwordHash: table.passwordHash,
                 passwordSalt: table.passwordSalt,
                 encryptedContent: encryptedContent.encryptedContent
@@ -158,4 +200,64 @@ export const saveTableContent = async (id: number, password: string, content: Ta
         success: false,
         error: "Table not found"
     }
+}
+
+/**
+ * Re-key operation: verifies the old password, generates a new salt and hash,
+ * derives a new secret key, re-encrypts the table payload, and updates the database record.
+ * 
+ * @param id - Database identifier of the table.
+ * @param tableName - Table display name.
+ * @param oldPassword - Current password required for authorization verification.
+ * @param newPassword - New password to apply for future authentication and key derivation.
+ * @param content - Current plaintext {@link TableData} payload to re-encrypt under the new key.
+ * @returns A promise resolving to a {@link ServiceResponse} indicating status.
+ */
+export const changeTablePassword = async (id: number, tableName: string, oldPassword: string, newPassword: string, content: TableData) : Promise<ServiceResponse<number>> => {
+    const table = tableRepository.getTableById(id);
+    if(table){
+        const isOldPasswordVerified = await checkPassword(oldPassword, table.passwordHash, table.passwordSalt);
+        if(!isOldPasswordVerified){
+            return {success: false, error: 'Incorrect old password'}
+        }
+
+        const newHashResult = await hashPassword(newPassword);
+        if(!newHashResult.success || !newHashResult.hashedPassword || !newHashResult.salt){
+            return {success: false, error: "Password Hashing Failed"}
+        } 
+
+        const extractedSecretKey = await extractSecreKey(newPassword, newHashResult.salt);
+        const stringifiedContent = JSON.stringify(content);
+
+        const encryptedContent = encryptData(stringifiedContent, extractedSecretKey);
+        if(!encryptedContent.success || !encryptedContent.encryptedContent){
+            return {success: false, error: "Content Encryption Failed"}
+        }
+
+        const newTable: TableDTO = {
+            id: id,
+            tableName: tableName,
+            passwordHash: newHashResult.hashedPassword,
+            passwordSalt: newHashResult.salt,
+            encryptedContent: encryptedContent.encryptedContent
+        }
+
+        const result = tableRepository.updateTable(newTable);
+        if(result === 0){
+            return {
+                success: false,
+                error: "Table not Updated"
+            }
+        } else {
+            return {
+                success: true,
+                value: result
+            }
+        }
+    }
+    return {
+        success: false,
+        error: "Table not found"
+    }
+
 }

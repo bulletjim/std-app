@@ -1,17 +1,66 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * Frontend logging service providing console output and IPC forwarding to `electron-log`.
+ * 
+ * @module FrontendLogger
+ */
+
+/**
+ * Frontend logger interface that outputs messages to the browser console
+ * and dispatches log events to the main process via `window.logAPI`.
+ */
 export const logger = {
-    info: (context: string, message: string, data?: any) => {
-        console.log(`[${context}] ${message}`, data ? data : '');
-        window.logAPI.sendLog('info', context, message, data);
+
+    /**
+     * Dispatches an informational log event.
+     * 
+     * @param context - Logical subsystem or component tag (e.g., 'API', 'UI').
+     * @param message - Descriptive log message.
+     * @param data - Optional dynamic payload or metadata.
+     */
+    info: (context: string, message: string, data?: unknown) => {
+        const dataString = parseData(data);
+        console.log(`[${context}] ${message}`, dataString);
+        window.logAPI.sendLog('info', context, message, dataString);
     },
     
-    error: (context: string, message: string, error?: any) => {
-        console.error(`[${context}] ${message}`, error ? error : '');
-        window.logAPI.sendLog('error', context, message, error?.message || error);
+    /**
+     * Dispatches an error log event.
+     * 
+     * @param context - Logical subsystem or component tag.
+     * @param message - Error summary message.
+     * @param error - Caught exception or error object.
+     */
+    error: (context: string, message: string, error?: unknown) => {
+        const errorString = parseData(error);
+        console.error(`[${context}] ${message}`, errorString);
+        window.logAPI.sendLog('error', context, message, errorString);
     },
     
-    warn: (context: string, message: string, data?: any) => {
-        console.warn(`[${context}] ${message}`, data ? data : '');
-        window.logAPI.sendLog('warn', context, message, data);
+    /**
+     * Dispatches a warning log event.
+     * 
+     * @param context - Logical subsystem or component tag.
+     * @param message - Warning summary message.
+     * @param data - Optional dynamic metadata.
+     */
+    warn: (context: string, message: string, data?: unknown) => {
+        const dataString = parseData(data);
+        console.warn(`[${context}] ${message}`, dataString);
+        window.logAPI.sendLog('warn', context, message, dataString);
     }
+};
+
+/**
+ * Safely converts unknown data structures or errors into printable string format.
+ * 
+ * @param data - Raw input payload.
+ * @returns Safe string representation for logging outputs.
+ * @internal
+ */
+const parseData = (data: unknown): string => {
+    if (data === undefined || data === null) return '';
+    if (data instanceof Error) return data.message;
+    if (typeof data === 'string') return data;
+    if (typeof data === 'object') return JSON.stringify(data);
+    return String(data);
 };
