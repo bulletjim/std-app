@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Table Database</title>
+    <link rel="stylesheet" href="./index.css">
+  </head>
+
+  <body>
+    <header>
+      <h1>Secure Vault</h1>
+      <nav aria-label="Main Menu">
+        <button id="nav-btn-create-table" class="active">+</button>
+        <button id="nav-btn-dashboard" class="active">My Tables</button>
+      </nav>
+    </header>
+    <main class="app-container">
+
+      <section id="view-create-table" class="view hidden" aria-labelledby="create-table-title">
+        <h2 id="home-title">Create table</h2>
+
+        <form id="form-create-table">
+          <div>
+            <label for="table-name">Table Name</label>
+            <input type="text" name="tableName" id="table-name" required>
+          </div>
+          <div>
+            <label for="table-password">Password</label>
+            <input type="password" name="tablePassword" id="table-password" required>
+          </div>
+          <div>
+            <button type="submit">Create</button>
+          </div>
+        </form>
+      </section>
+      
+      <section id="view-dashboard" class="view active" aria-labelledby="dashboard-title">
+        <h2 id="dashboard-title">Your Tables</h2>
+            
+        <ul id="table-list-container" class="table-list">
+        </ul>
+      </section>
+
+      <section id="view-table-detail" class="view hidden" aria-labelledby="detail-title">
+        <header>
+          <h2 id="detail-title">Table Name</h2>
+          <div class="table-detail-actions">
+            <button id="btn-add-col">Add Column</button>
+            <button id="btn-add-row">Add Row</button>
+            <button id="btn-save-db" class="primary">Save</button>
+            <button id="btn-export-table">Export</button>
+            <button id="btn-change-password">Change Password</button>
+          </div>
+        </header>
+        <div id="table-empty-state" class="hidden"></div>
+        <table class="data-table">
+          <thead id="table-head-row">
+          </thead>
+          <tbody id="table-body-container">
+          </tbody>
+        </table>
+      </section>
+
+    </main>
+
+    <dialog id="modal-confirm">
+      <article>
+        <h2>Are you sure?</h2>
+        <p>Do you want to delete this table? This action is permanent</p>
+        <label for="modal-password">Password</label>
+        <input type="password" name="modal-password" id="modal-password-input" placeholder="password" required>
+        <footer>
+          <button id="btn-modal-cancel">Cancel</button>
+          <button id="btn-modal-confirm">Delete</button>
+        </footer>
+      </article>
+    </dialog>
+
+    <dialog id="modal-open-table">
+      <article>
+        <h2>Unlock Table</h2>
+        <p>Insert Table Password</p>
+        <form id="form-open-table">
+          <div>
+            <label for="open-password">Password</label>
+            <input type="password" id="open-password" required>
+          </div>
+          <footer>
+            <button type="button" id="btn-cancel-open">Cancel</button>
+            <button type="submit" id="btn-confirm-open">Open</button>
+          </footer>
+        </form>
+      </article>
+    </dialog>
+
+    <dialog id="modal-add-column">
+      <article>
+        <h2>Add New Column</h2>
+        <form id="form-add-column">
+          <div>
+            <label for="new-column-name">Column Name</label>
+            <input type="text" id="new-column-name" placeholder="e.g. Email" required>
+          </div>
+          <footer>
+            <button type="button" id="btn-cancel-column">Cancel</button>
+            <button type="submit">Add</button>
+          </footer>
+        </form>
+      </article>
+    </dialog>
+
+    <dialog id="modal-unsaved-changes">
+      <p>You have unsaved changes, do you want to exit anyway?</p>
+      <button id="btn-unsaved-cancel">No</button>
+      <button id="btn-unsaved-confirm">Yes</button>
+    </dialog>
+
+    <dialog id="modal-change-password">
+      <article>
+        <h2>Change Password</h2>
+        <form id="form-change-password">
+          <div>
+            <label for="cp-old-password">Old Password</label>
+            <input type="password" id="cp-old-password" required>
+          </div>
+          <div>
+            <label for="cp-new-password">New Password</label>
+            <input type="password" id="cp-new-password" required minlength="4">
+          </div>
+          <div>
+            <label for="cp-confirm-password">Confirm New Password</label>
+            <input type="password" id="cp-confirm-password" required minlength="4">
+          </div>
+          <footer style="margin-top: 16px;">
+            <button type="button" id="btn-cancel-change-pw" class="danger">Cancel</button>
+            <button type="submit">Update Password</button>
+          </footer>
+        </form>
+      </article>
+    </dialog>
+
+    <template id="tpl-table-list-item">
+      <li>
+        <article class="table-card">
+          <h3 class="tpl-name">Name</h3>
+          <div class="actions">
+            <button class="tpl-btn-open">Open</button>
+            <button class="tpl-btn-delete danger">Delete</button>
+          </div>
+        </article>
+      </li>
+    </template>
+
+    <template id="tpl-data-row">
+      <tr>
+        <td class="tpl-row-id">1</td>
+        <td class="tpl-row-content">Content</td>
+        <td>
+          <button class="tpl-btn-edit">Edit</button>
+        </td>
+      </tr>
+    </template>
+
+    <footer>
+      <small>State: <span id="app-status">Ready</span></small>
+    </footer>
+
+    <script type="module" src="./renderer.ts"></script>
+  </body>
+
+</html>

@@ -1,15 +1,22 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "commonjs",
+    "module": "ESNext",
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
     "sourceMap": true,
-    "baseUrl": ".",
     "outDir": "dist",
-    "moduleResolution": "node",
-    "resolveJsonModule": true
-  }
+    "rootDir": "./src",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "paths": {
+      "@backend/*" : ["./src/backend/*"],
+      "@frontend/*": ["./src/frontend/*"],
+      "@test/*": ["./src/tests/*"]
+    }
+
+  },
+  "include": ["src"]
 }

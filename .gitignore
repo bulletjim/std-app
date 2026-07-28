@@ -20,7 +20,7 @@ pids
 lib-cov
 
 # Coverage directory used by tools like istanbul
-coverage
+coverage/
 *.lcov
 
 # nyc test coverage
@@ -93,3 +93,17 @@ out/
 
 # Editor settings
 *.vscode
+
+# Ignore tests results and local test dbs
+*.db
+*.db-journal
+*.db-wal
+v8-compile-cache/
+.vitest-result/
+npm-debug.log*
+
+# TypeDoc generated files
+docs/api
+
+# Release files
+release/
