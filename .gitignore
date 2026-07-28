@@ -104,3 +104,6 @@ npm-debug.log*
 
 # TypeDoc generated files
 docs/api
+
+# Release files
+release/

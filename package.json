@@ -8,15 +8,14 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "test": "vitest",
     "make": "electron-forge make",
-    "publish": "electron-forge publish",
+    "test": "vitest",
     "lint": "eslint --ext .ts,.tsx .",
     "docs": "typedoc"
   },
   "keywords": [],
   "author": {
-    "name": "BulletJim",
+    "name": "Bulletjim",
     "email": "gianmarco.campania@gmail.com"
   },
   "license": "MIT",
@@ -29,14 +28,13 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.11.1",
     "@electron-forge/plugin-fuses": "^7.11.1",
     "@electron-forge/plugin-vite": "^7.11.1",
+    "@electron-forge/publisher-github": "^7.11.2",
     "@electron/fuses": "^1.8.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/electron-squirrel-startup": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "better-sqlite3": "^12.11.1",
     "electron": "42.0.1",
-    "electron-log": "^5.4.4",
     "eslint": "^8.57.1",
     "eslint-import-resolver-typescript": "^4.4.5",
     "eslint-plugin-import": "^2.32.0",
@@ -46,6 +44,8 @@
     "vitest": "^4.1.9"
   },
   "dependencies": {
+    "better-sqlite3": "^12.11.1",
+    "electron-log": "^5.4.4",
     "electron-squirrel-startup": "^1.0.1"
   }
 }
