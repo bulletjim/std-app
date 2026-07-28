@@ -1,3 +1,5 @@
+export type CellValue = string | number | boolean | null;
+
 export interface CreateTableRequest {
     tableName: string,
     passwordHash: string,
@@ -20,7 +22,6 @@ export interface DecryptedTableDTO {
 }
 
 export interface TableData{
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    rows: Record<string, any>[],
+    rows: Record<string, CellValue>[],
     columns: string[]
 }

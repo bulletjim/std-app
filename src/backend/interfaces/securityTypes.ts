@@ -9,3 +9,10 @@ export interface DecryptionResponse{
     decryptedContent?: string,
     error?: string
 }
+
+export interface PasswordResponse{
+    success: boolean,
+    hashedPassword?: string,
+    salt?: string,
+    error?: string 
+}

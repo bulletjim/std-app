@@ -1,7 +1,6 @@
-import { PasswordResponse } from '@backend/interfaces/serviceTypes';
 import util from 'node:util';
 import crypto from 'node:crypto';
-import { DecryptionResponse, EncryptionResponse } from '@backend/interfaces/securityTypes';
+import { DecryptionResponse, EncryptionResponse, PasswordResponse } from '@backend/interfaces/securityTypes';
 import { logger } from '../util/logger';
 
 

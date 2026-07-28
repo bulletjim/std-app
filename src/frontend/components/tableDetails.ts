@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DecryptedTableDTO } from "@backend/interfaces/tableTypes";
 import { logger } from "../util/logger";
-import { saveTableContent } from "../api";
+import { changeTablePassword, saveTableContent } from "../api";
+import { handleExport } from '../util/tableUtils';
 
 let currentTableData: DecryptedTableDTO | null = null;
 let currentTablePassword: string | null = null;
@@ -139,6 +140,8 @@ const setupDetailEvents = () => {
     const addColModal = document.getElementById('modal-add-column') as HTMLDialogElement;
     const addColForm = document.getElementById('form-add-column') as HTMLFormElement;
     const addColInput = document.getElementById('new-column-name') as HTMLInputElement;
+    const modalChangePw = document.getElementById('modal-change-password') as HTMLDialogElement;
+    const formChangePw = document.getElementById('form-change-password') as HTMLFormElement;
     
     const tableNameEl = document.getElementById('detail-title') as HTMLElement;
     if (tableNameEl) {
@@ -203,6 +206,65 @@ const setupDetailEvents = () => {
     document.getElementById('btn-cancel-column')?.addEventListener('click', () => {
         addColModal.close();
         addColForm.reset();
+    });
+
+    document.getElementById('btn-export-table')?.addEventListener('click', async () => {
+        const success = await handleExport(currentTableData);
+        if (success) {
+            alert("File exported successfully!");
+            logger.info('TABLE-DETAIL', 'Export completed based on user dialog choice');
+        }
+    });
+
+    document.getElementById('btn-change-password')?.addEventListener('click', () => {
+        modalChangePw.showModal();
+    });
+
+    document.getElementById('btn-cancel-change-pw')?.addEventListener('click', () => {
+        modalChangePw.close();
+        formChangePw.reset();
+    });
+
+    formChangePw.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!currentTableData) return;
+
+        const oldPw = (document.getElementById('cp-old-password') as HTMLInputElement).value;
+        const newPw = (document.getElementById('cp-new-password') as HTMLInputElement).value;
+        const confirmPw = (document.getElementById('cp-confirm-password') as HTMLInputElement).value;
+
+        if (newPw !== confirmPw) {
+            alert("New passwords do not match!");
+            return;
+        }
+
+        if (oldPw !== currentTablePassword) {
+            alert("Old password is incorrect!");
+            return;
+        }
+
+        try {
+            logger.info('TABLE-DETAIL', 'Requesting password change...');
+            const response = await changeTablePassword(
+                currentTableData.id, 
+                currentTableData.tableName, 
+                oldPw, 
+                newPw, 
+                currentTableData.decryptedContent
+            );
+
+            if (response) {
+                alert("Password changed successfully!");
+                currentTablePassword = newPw; 
+                hasUnsavedChanges = false;
+                modalChangePw.close();
+                formChangePw.reset();
+            } else {
+                alert("Error: " + ("Failed to change password"));
+            }
+        } catch (error) {
+            logger.error('TABLE-DETAIL', 'Password change failed', error);
+        }
     });
 
     addColForm?.addEventListener('submit', (e) => {

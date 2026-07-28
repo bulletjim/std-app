@@ -1,4 +1,4 @@
-import { ServerResponse } from "@backend/interfaces/controllerTypes";
+import { ServerResponse } from "@backend/interfaces";
 import { DecryptedTableDTO, TableData, TableDTO } from "@backend/interfaces/tableTypes";
 
 export {};
@@ -11,10 +11,11 @@ declare global {
       deleteTable: (id: number, password: string) => Promise<ServerResponse<number>>;
       getSelectedTable: (id: number, password: string) => Promise<ServerResponse<DecryptedTableDTO>>;
       updateTableContent: (id: number, tableName: string, password: string, content: TableData) => Promise<ServerResponse<number>>;
+      exportTable: (csvContent: string, jsonContent: string, defaultFileName: string) => Promise<ServerResponse<boolean>>;
+      changeTablePassword: (id: number, tableName: string, oldPassword: string, newPassword: string, content: TableData) => Promise<ServerResponse<boolean>>;
     };
     logAPI: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      sendLog: (level: 'info' | 'warn' | 'error', context: string, message: string, data?: any) => void;
+      sendLog: (level: 'info' | 'warn' | 'error', context: string, message: string, data?: unknown) => void;
     }
   }
 }

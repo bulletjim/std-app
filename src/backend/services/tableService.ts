@@ -1,7 +1,7 @@
 import { CreateTableRequest, DecryptedTableDTO, TableData, TableDTO } from "@backend/interfaces/tableTypes"
 import * as tableRepository from "../db/tableRepository"
-import { ServiceResponse } from "@backend/interfaces/serviceTypes";
-import { checkPassword, decryptData, encryptData, extractSecreKey, hashPassword } from "../services/securityService";
+import { ServiceResponse } from "@backend/interfaces/index";
+import { checkPassword, decryptData, encryptData, extractSecreKey, hashPassword } from "./securityService";
 
 export const saveTable = async (tableName: string, unhashedPassword: string) : Promise<ServiceResponse<number>> => {
     const hashResult = await hashPassword(unhashedPassword);
@@ -158,4 +158,53 @@ export const saveTableContent = async (id: number, tableName: string, password: 
         success: false,
         error: "Table not found"
     }
+}
+
+export const changeTablePassword = async (id: number, tableName: string, oldPassword: string, newPassword: string, content: TableData) : Promise<ServiceResponse<number>> => {
+    const table = tableRepository.getTableById(id);
+    if(table){
+        const isOldPasswordVerified = await checkPassword(oldPassword, table.passwordHash, table.passwordSalt);
+        if(!isOldPasswordVerified){
+            return {success: false, error: 'Incorrect old password'}
+        }
+
+        const newHashResult = await hashPassword(newPassword);
+        if(!newHashResult.success || !newHashResult.hashedPassword || !newHashResult.salt){
+            return {success: false, error: "Password Hashing Failed"}
+        } 
+
+        const extractedSecretKey = await extractSecreKey(newPassword, newHashResult.salt);
+        const stringifiedContent = JSON.stringify(content);
+
+        const encryptedContent = encryptData(stringifiedContent, extractedSecretKey);
+        if(!encryptedContent.success || !encryptedContent.encryptedContent){
+            return {success: false, error: "Content Encryption Failed"}
+        }
+
+        const newTable: TableDTO = {
+            id: id,
+            tableName: tableName,
+            passwordHash: newHashResult.hashedPassword,
+            passwordSalt: newHashResult.salt,
+            encryptedContent: encryptedContent.encryptedContent
+        }
+
+        const result = tableRepository.updateTable(newTable);
+        if(result === 0){
+            return {
+                success: false,
+                error: "Table not Updated"
+            }
+        } else {
+            return {
+                success: true,
+                value: result
+            }
+        }
+    }
+    return {
+        success: false,
+        error: "Table not found"
+    }
+
 }

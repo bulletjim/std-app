@@ -244,6 +244,18 @@ th:hover button.btn-delete-col {
   opacity: 0.85;
 }
 
+.btn-export-table {
+    background: transparent; 
+    border: 1px solid var(--text-secondary); 
+    color: var(--text-secondary);
+}
+
+.btn-change-table-password {
+    background: transparent; 
+    border: 1px solid var(--accent-color); 
+    color: var(--accent-color);
+}
+
 button.btn-delete-col:hover {
   opacity: 1 !important;
   color: #ffffff !important;

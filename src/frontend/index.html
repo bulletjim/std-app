@@ -46,9 +46,13 @@
       <section id="view-table-detail" class="view hidden" aria-labelledby="detail-title">
         <header>
           <h2 id="detail-title">Table Name</h2>
-          <button id="btn-add-col">Add Column</button>
-          <button id="btn-add-row">Add Row</button>
-          <button id="btn-save-db" class="primary">Save</button>
+          <div class="table-detail-actions">
+            <button id="btn-add-col">Add Column</button>
+            <button id="btn-add-row">Add Row</button>
+            <button id="btn-save-db" class="primary">Save</button>
+            <button id="btn-export-table">Export</button>
+            <button id="btn-change-password">Change Password</button>
+          </div>
         </header>
         <div id="table-empty-state" class="hidden"></div>
         <table class="data-table">
@@ -111,6 +115,30 @@
       <p>You have unsaved changes, do you want to exit anyway?</p>
       <button id="btn-unsaved-cancel">No</button>
       <button id="btn-unsaved-confirm">Yes</button>
+    </dialog>
+
+    <dialog id="modal-change-password">
+      <article>
+        <h2>Change Password</h2>
+        <form id="form-change-password">
+          <div>
+            <label for="cp-old-password">Old Password</label>
+            <input type="password" id="cp-old-password" required>
+          </div>
+          <div>
+            <label for="cp-new-password">New Password</label>
+            <input type="password" id="cp-new-password" required minlength="4">
+          </div>
+          <div>
+            <label for="cp-confirm-password">Confirm New Password</label>
+            <input type="password" id="cp-confirm-password" required minlength="4">
+          </div>
+          <footer style="margin-top: 16px;">
+            <button type="button" id="btn-cancel-change-pw" class="danger">Cancel</button>
+            <button type="submit">Update Password</button>
+          </footer>
+        </form>
+      </article>
     </dialog>
 
     <template id="tpl-table-list-item">

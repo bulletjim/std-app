@@ -8,15 +8,18 @@ import { logger } from './util/logger';
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;
 
+const isDev = !app.isPackaged;
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
 }
-app.whenReady().then(() => {
 
+app.whenReady().then(() => {
   const userPath = app.getPath('userData');
   const dbPath = path.join(userPath, 'std.db');
-  console.log(dbPath);
+  
+  logger.info('BACKEND-MAIN', 'Database path resolved', dbPath);
 
   logger.info('BACKEND-MAIN', 'App Initializing');
   
@@ -27,10 +30,7 @@ app.whenReady().then(() => {
   setupTableHandlers();
 
   createWindow();
-})
-
-
-
+});
 
 const createWindow = () => {
   // Create the browser window.
@@ -39,6 +39,8 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
     },
   });
 
@@ -51,11 +53,26 @@ const createWindow = () => {
     );
   }
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // --- Production & Development Management---
+  if (isDev) {
+    mainWindow.webContents.openDevTools();
+  } else {
+    mainWindow.setMenu(null);
+    
+    // Production: forces devTools quit if triggered
+    mainWindow.webContents.on('devtools-opened', () => {
+      mainWindow.webContents.closeDevTools();
+    });
+
+    // Produzione: preventing clickjacking blocking external url
+    mainWindow.webContents.on('will-navigate', (event, navigationUrl) => {
+      if (!navigationUrl.startsWith('file://')) {
+        logger.warn('SECURITY', `Blocked attempt to navigate to external URL: ${navigationUrl}`);
+        event.preventDefault();
+      }
+    });
+  }
 };
-
-
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -75,13 +92,10 @@ app.on('activate', () => {
   }
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-ipcMain.on("log-message", (event, level: 'info' | 'warn' | 'error', context: string, message: string, data?: any) => {
+ipcMain.on("log-message", (event, level: 'info' | 'warn' | 'error', context: string, message: string, data?: unknown) => {
   const frontendContext = `FRONTEND-${context}`;
 
-    if (level === 'info') logger.info(frontendContext, message, data);
-    if (level === 'warn') logger.warn(frontendContext, message, data);
-    if (level === 'error') logger.error(frontendContext, message, data);
-
-})
-
+  if (level === 'info') logger.info(frontendContext, message, data);
+  if (level === 'warn') logger.warn(frontendContext, message, data);
+  if (level === 'error') logger.error(frontendContext, message, data);
+});
