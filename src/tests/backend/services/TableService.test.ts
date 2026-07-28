@@ -1,5 +1,5 @@
 import * as tableRepository from '@backend/db/tableRepository';
-import { TableDTO } from '@backend/interfaces/tableTypes';
+import { CellValue, TableDTO } from '@backend/interfaces/tableTypes';
 import * as securityService from '@backend/services/securityService';
 import { changeTablePassword, checkDeleteTable, checkSelectedTable, saveTable, saveTableContent, verifyTableNames } from '@backend/services/tableService';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
@@ -25,8 +25,8 @@ describe("Business Logic: Table Service", () => {
     }); 
     
     it("Create Table - should return success: false + an error: error if the creation has failed", async () => {
-        // @ts-expect-error This is an inducted error
-        vi.mocked(tableRepository.createTable).mockReturnValue(null);
+        // This null is intentionally placed to simulate an error while saving a table in DB
+        vi.mocked(tableRepository.createTable).mockReturnValue(null as unknown as number);
         const response = await saveTable('new table', 'bad passwword');
         
         expect(response.success).toBe(false);
@@ -209,7 +209,7 @@ describe("Business Logic: Table Service", () => {
         const tableName = 'Test Vault';
         const wrongOldPassword = 'wrong-password';
         const newPassword = 'new-password-123';
-        const content = { columns: ['Pin'], rows: [] };
+        const content = { columns: ['Pin'], rows: [] as Record<string, CellValue>[]};
 
         vi.mocked(tableRepository.getTableById).mockReturnValue({
             id: tableId,

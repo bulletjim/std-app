@@ -1,3 +1,10 @@
+/**
+ * Electron Main Process Entry Point.
+ * Handles lifecycle events, native window creation, IPC registry, and environment initialization.
+ * 
+ * @module MainProcess
+ */
+
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
@@ -8,6 +15,10 @@ import { logger } from './util/logger';
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;
 
+/**
+ * Flag indicating whether the application is running in development mode.
+ * Evaluates to `true` when unpackaged and `false` in production builds.
+ */
 const isDev = !app.isPackaged;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -15,6 +26,11 @@ if (started) {
   app.quit();
 }
 
+/**
+ * Application initialization lifecycle handler.
+ * Resolves storage paths, connects SQLite DB, registers IPC handlers,
+ * and launches the primary window upon application readiness.
+ */
 app.whenReady().then(() => {
   const userPath = app.getPath('userData');
   const dbPath = path.join(userPath, 'std.db');
@@ -32,6 +48,11 @@ app.whenReady().then(() => {
   createWindow();
 });
 
+/**
+ * Instantiates and configures the main Electron {@link BrowserWindow}.
+ * Enforces web security preferences, loads Vite dev server or build files,
+ * and sets production navigation/devtools guards.
+ */
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -53,7 +74,7 @@ const createWindow = () => {
     );
   }
 
-  // --- Production & Development Management---
+  // --- Production & Development Management ---
   if (isDev) {
     mainWindow.webContents.openDevTools();
   } else {
@@ -64,7 +85,7 @@ const createWindow = () => {
       mainWindow.webContents.closeDevTools();
     });
 
-    // Produzione: preventing clickjacking blocking external url
+    // Production: prevents clickjacking blocking external url
     mainWindow.webContents.on('will-navigate', (event, navigationUrl) => {
       if (!navigationUrl.startsWith('file://')) {
         logger.warn('SECURITY', `Blocked attempt to navigate to external URL: ${navigationUrl}`);
@@ -92,6 +113,10 @@ app.on('activate', () => {
   }
 });
 
+/**
+ * Global IPC listener for logging events dispatched from the renderer context.
+ * Prepends `FRONTEND-` to the log context and forwards payloads to `electron-log`.
+ */
 ipcMain.on("log-message", (event, level: 'info' | 'warn' | 'error', context: string, message: string, data?: unknown) => {
   const frontendContext = `FRONTEND-${context}`;
 

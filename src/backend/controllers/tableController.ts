@@ -1,3 +1,10 @@
+/**
+ * Controller mapping Electron IPC main channel invocations (`ipcMain.handle`)
+ * to table business services and native dialog interactions.
+ * 
+ * @module TableController
+ */
+
 import { dialog, ipcMain, IpcMainInvokeEvent } from "electron"
 import fs from 'fs';
 import * as tableService from "../services/tableService"
@@ -5,7 +12,15 @@ import { ServerResponse } from "@backend/interfaces/index";
 import { DecryptedTableDTO, TableData, TableDTO } from "@backend/interfaces/tableTypes";
 import { logger } from "../util/logger";
 
+/**
+ * Registers all table-related IPC message handlers in the Electron main process.
+ * Should be called once during application startup in `main.ts`.
+ */
 export const setupTableHandlers = () => {
+    
+    /**
+     * Handles table creation requests.
+     */
     ipcMain.handle('table:create-table', async (event: IpcMainInvokeEvent, tableName: string, password: string) : Promise<ServerResponse<number>> => {
         try{
             return await tableService.saveTable(tableName, password) as ServerResponse<number>;
@@ -15,6 +30,9 @@ export const setupTableHandlers = () => {
         }
     });
 
+    /**
+     * Retrieves basic info for all existing user tables.
+     */
     ipcMain.handle('table:get-all-tables', async () : Promise<ServerResponse<TableDTO[] | null>> => {
         try{
             const response = await tableService.verifyTableNames();
@@ -37,6 +55,9 @@ export const setupTableHandlers = () => {
         }
     });
     
+    /**
+     * Deletes a table after verifying password credentials.
+     */
     ipcMain.handle('table:delete-table', async (event: IpcMainInvokeEvent, id: number, password: string) : Promise<ServerResponse<number>> => {
         try {
             return await tableService.checkDeleteTable(id, password);
@@ -46,6 +67,9 @@ export const setupTableHandlers = () => {
         }
     });
 
+    /**
+     * Authenticates and decrypts table contents.
+     */
     ipcMain.handle('table:access-table', async (event: IpcMainInvokeEvent, id: number, password: string) : Promise<ServerResponse<DecryptedTableDTO>> => {
         try{
             return await tableService.checkSelectedTable(id, password);
@@ -55,6 +79,9 @@ export const setupTableHandlers = () => {
         }
     });
 
+    /**
+     * Encrypts and updates existing table content.
+     */
     ipcMain.handle('table:update-table', async (event: IpcMainInvokeEvent, id: number, tableName: string , password: string, content: TableData) : Promise<ServerResponse<number>> => {
         try{
             return await tableService.saveTableContent(id, tableName, password, content);
@@ -64,14 +91,16 @@ export const setupTableHandlers = () => {
         }
     });
 
+    /**
+     * Opens a native OS file save dialog to export table content as CSV or JSON.
+     */
     ipcMain.handle('table:export-table', async (event: IpcMainInvokeEvent, csvContent: string, jsonContent: string, defaultFileName: string) : Promise<ServerResponse<boolean>> => {
         const {filePath} = await dialog.showSaveDialog({
             defaultPath: defaultFileName,
             title: 'Export Table Data',
             filters: [
                 {name: 'CSV File', extensions: ['csv']},
-                {name: 'JSON File', extensions: ['json']},
-                {name: 'All Files', extensions: ['*']}
+                {name: 'JSON File', extensions: ['json']}
             ]
         });
 
@@ -83,6 +112,9 @@ export const setupTableHandlers = () => {
         return {success: false, error: 'Operation Cancelled'};
     });
 
+    /**
+     * Re-key/re-encrypt table payload under a new password.
+     */
     ipcMain.handle('table:change-password', async (event: IpcMainInvokeEvent, id: number, tableName: string, oldPassword: string, newPassword: string, content: TableData) : Promise<ServerResponse<number>> => {
 
         try{
