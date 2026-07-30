@@ -1,6 +1,9 @@
 name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
 
+exclude-labels:
+  - 'ignore-for-release'
+
 template: |
   Here are the changes included in this version:
 
