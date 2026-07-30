@@ -11,6 +11,7 @@ import started from 'electron-squirrel-startup';
 import { createDb } from './db/tableRepository';
 import { setupTableHandlers } from './controllers/tableController';
 import { logger } from './util/logger';
+import { updateElectronApp } from 'update-electron-app';
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;
@@ -32,6 +33,11 @@ if (started) {
  * and launches the primary window upon application readiness.
  */
 app.whenReady().then(() => {
+  // Auto updater configuration
+  updateElectronApp({
+    updateInterval: '1 week', 
+    notifyUser: true          
+  });
   const userPath = app.getPath('userData');
   const dbPath = path.join(userPath, 'std.db');
   
