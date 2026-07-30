@@ -11,7 +11,13 @@
     "make": "electron-forge make",
     "test": "vitest",
     "lint": "eslint --ext .ts,.tsx .",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "auto-commit": "cz"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   },
   "keywords": [],
   "author": {
@@ -34,6 +40,8 @@
     "@types/electron-squirrel-startup": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
+    "commitizen": "^4.3.2",
+    "cz-conventional-changelog": "^3.3.0",
     "electron": "42.0.1",
     "eslint": "^8.57.1",
     "eslint-import-resolver-typescript": "^4.4.5",
@@ -46,6 +54,7 @@
   "dependencies": {
     "better-sqlite3": "^12.11.1",
     "electron-log": "^5.4.4",
-    "electron-squirrel-startup": "^1.0.1"
+    "electron-squirrel-startup": "^1.0.1",
+    "update-electron-app": "^3.3.0"
   }
 }
