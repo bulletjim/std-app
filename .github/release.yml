@@ -1,0 +1,31 @@
+changelog:
+  exclude:
+    labels:
+      - chore
+      - ignore-for-release
+    authors:
+      - dependabot[bot]
+
+  categories:
+    - title: "New Features"
+      labels:
+        - "enhancement"
+        - "feature"
+
+    - title: "BugFix"
+      labels:
+        - "bug"
+        - "fix"
+
+    - title: "Documentation"
+      labels:
+        - "documentation"
+
+    - title: " Maintenance & Refactoring"
+      labels:
+        - "chore"
+        - "refactor"
+
+    - title: "Other"
+      labels:
+        - "*"
