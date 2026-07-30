@@ -1,7 +1,6 @@
 changelog:
   exclude:
     labels:
-      - chore
       - ignore-for-release
     authors:
       - dependabot[bot]
@@ -12,7 +11,7 @@ changelog:
         - "enhancement"
         - "feature"
 
-    - title: "BugFix"
+    - title: "Bug Fixes"
       labels:
         - "bug"
         - "fix"
@@ -21,7 +20,7 @@ changelog:
       labels:
         - "documentation"
 
-    - title: " Maintenance & Refactoring"
+    - title: "Maintenance & Refactoring"
       labels:
         - "chore"
         - "refactor"
