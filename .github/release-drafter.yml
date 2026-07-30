@@ -43,4 +43,4 @@ categories:
       - 'ci'
       - 'chore'
 
-change-template: '- $TITLE (#$NUMBER) by @$AUTHOR $LABELS'
+change-template: '- $TITLE (#$NUMBER) by @$AUTHOR'
