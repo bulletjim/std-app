@@ -1,6 +1,14 @@
 name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
 
+template: |
+  Here are the changes included in this version:
+
+  $CHANGES
+
+  ---
+  *Released by **Gianmarco Raimondi***
+
 categories:
   - title: 'Features & Modules'
     labels:
