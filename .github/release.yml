@@ -6,25 +6,39 @@ changelog:
       - dependabot[bot]
 
   categories:
-    - title: "New Features"
+    - title: "✨ Features & Modules"
       labels:
         - "enhancement"
-        - "feature"
+        - "frontend"
+        - "backend"
+        - "database"
 
     - title: "Bug Fixes"
       labels:
         - "bug"
-        - "fix"
+
+    - title: "Performance Improvements"
+      labels:
+        - "performance"
 
     - title: "Documentation"
       labels:
         - "documentation"
 
-    - title: "Maintenance & Refactoring"
+    - title: "Refactoring & Code Quality"
       labels:
-        - "chore"
         - "refactor"
 
-    - title: "Other"
+    - title: "Tests"
+      labels:
+        - "test"
+
+    - title: "Build, CI/CD & Maintenance"
+      labels:
+        - "build"
+        - "ci"
+        - "chore"
+
+    - title: "Other Changes"
       labels:
         - "*"
